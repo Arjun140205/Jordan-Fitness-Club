@@ -7,10 +7,6 @@ import UserDashboard from './pages/UserDashboard'
 import AdminDashboard from './pages/AdminDashboard'
 import Login from './pages/Login'
 import Register from './pages/Register'
-import Programs from './pages/Programs'
-import Services from './pages/Services'
-import About from './pages/About'
-import Community from './pages/Community'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import PageTransition from './components/PageTransition'
@@ -35,7 +31,7 @@ function AnimatedRoutes() {
           }
         />
         <Route
-          path="/user/dashboard"
+          path="/dashboard"
           element={
             <PageTransition key="user-dashboard">
               <ProtectedRoute>
@@ -45,7 +41,7 @@ function AnimatedRoutes() {
           }
         />
         <Route
-          path="/admin/dashboard"
+          path="/admin"
           element={
             <PageTransition key="admin-dashboard">
               <ProtectedRoute adminOnly={true}>
@@ -70,38 +66,6 @@ function AnimatedRoutes() {
             </PageTransition>
           }
         />
-        <Route
-          path="/programs"
-          element={
-            <PageTransition key="programs">
-              <Programs />
-            </PageTransition>
-          }
-        />
-        <Route
-          path="/services"
-          element={
-            <PageTransition key="services">
-              <Services />
-            </PageTransition>
-          }
-        />
-        <Route
-          path="/about"
-          element={
-            <PageTransition key="about">
-              <About />
-            </PageTransition>
-          }
-        />
-        <Route
-          path="/community"
-          element={
-            <PageTransition key="community">
-              <Community />
-            </PageTransition>
-          }
-        />
       </Routes>
     </AnimatePresence>
   );
@@ -110,34 +74,27 @@ function AnimatedRoutes() {
 function App() {
   useEffect(() => {
     AOS.init({
-      duration: 800,
-      once: false,
-      mirror: true
-    });
-  }, []);
+      duration: 1000,
+      once: true,
+    })
+  }, [])
 
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <Router>
+    <Router>
+      <ThemeProvider>
+        <AuthProvider>
           <div className="min-h-screen flex flex-col">
             <Navbar />
-            <main className="flex-1 container mx-auto px-4 py-8">
+            <main className="flex-grow">
               <AnimatedRoutes />
             </main>
             <Footer />
-            <Toaster 
-              position="top-center"
-              expand={false}
-              richColors
-              closeButton
-              theme="system"
-            />
           </div>
-        </Router>
-      </AuthProvider>
-    </ThemeProvider>
-  )
+          <Toaster position="top-center" richColors />
+        </AuthProvider>
+      </ThemeProvider>
+    </Router>
+  );
 }
 
-export default App
+export default App;
