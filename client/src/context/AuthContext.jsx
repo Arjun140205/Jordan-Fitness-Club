@@ -19,81 +19,89 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      validateToken(token);
-    } else {
-      setLoading(false);
-    }
+    const initialize = async () => {
+      const token = localStorage.getItem('token');
+      const rememberMe = localStorage.getItem('rememberMe') === 'true';
+      
+      if (token && rememberMe) {
+        await validateToken(token);
+      } else if (token) {
+        // If token exists but remember me is false, only validate if token is not expired
+        const tokenExp = getTokenExpiration(token);
+        if (tokenExp && tokenExp > Date.now()) {
+          await validateToken(token);
+        } else {
+          handleLogout();
+        }
+      } else {
+        setLoading(false);
+      }
+    };
+
+    initialize();
   }, []);
+
+  const getTokenExpiration = (token) => {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.exp * 1000; // Convert to milliseconds
+    } catch (error) {
+      return null;
+    }
+  };
 
   const validateToken = async (token) => {
     try {
-      const response = await axios.get(`${endpoints.user.profile}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const response = await axios.get(`${endpoints.auth.validate}`, {
+        headers: { Authorization: `Bearer ${token}` }
       });
-      setUser(response.data);
+      
+      setUser(response.data.user);
       setIsAuthenticated(true);
     } catch (error) {
-      console.error('Token validation error:', error);
-      logout();
+      handleLogout();
     } finally {
       setLoading(false);
     }
   };
 
-  const login = async (email, password) => {
-    try {
-      const response = await axios.post(endpoints.auth.login, {
-        email,
-        password,
-      });
+  const login = async (userData) => {
+    setUser(userData.user);
+    setIsAuthenticated(true);
 
-      const { token, user } = response.data;
-      localStorage.setItem('token', token);
-      setUser(user);
-      setIsAuthenticated(true);
-      toast.success('Login successful!');
-      return user;
-    } catch (error) {
-      console.error('Login error:', error);
-      toast.error(error.response?.data?.message || 'Login failed');
-      throw error;
+    // Update last login time
+    localStorage.setItem('lastLogin', new Date().toISOString());
+    
+    // Set session data
+    if (userData.token) {
+      localStorage.setItem('token', userData.token);
     }
   };
 
-  const register = async (userData) => {
-    try {
-      await axios.post(endpoints.auth.register, userData);
-      toast.success('Registration successful! Please login.');
-    } catch (error) {
-      console.error('Registration error:', error);
-      toast.error(error.response?.data?.message || 'Registration failed');
-      throw error;
-    }
-  };
-
-  const logout = () => {
-    localStorage.removeItem('token');
+  const handleLogout = () => {
     setUser(null);
     setIsAuthenticated(false);
-    toast.success('Logged out successfully');
+    localStorage.removeItem('token');
+    
+    // Only remove email if remember me is not enabled
+    if (localStorage.getItem('rememberMe') !== 'true') {
+      localStorage.removeItem('email');
+    }
+    
+    localStorage.removeItem('role');
   };
 
-  const value = {
+  const contextValue = {
     user,
     loading,
     isAuthenticated,
     login,
-    register,
-    logout,
+    logout: handleLogout,
   };
 
   return (
-    <AuthContext.Provider value={value}>
-      {!loading && children}
+    <AuthContext.Provider value={contextValue}>
+      {children}
     </AuthContext.Provider>
   );
 };
