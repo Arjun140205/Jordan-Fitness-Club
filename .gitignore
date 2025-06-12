@@ -1,0 +1,68 @@
+# =========================
+# 📁 General
+# =========================
+node_modules/
+dist/
+build/
+*.log
+*.local
+.env
+.env.*.local
+
+# =========================
+# 📦 Vite (client-side)
+# =========================
+dist-ssr/
+client/node_modules/
+client/dist/
+client/.vite/
+
+# =========================
+# 🚀 Server-side (Node.js)
+# =========================
+server/node_modules/
+server/dist/
+server/.env
+server/.env.*.local
+
+# =========================
+# 🧪 Test output
+# =========================
+coverage/
+*.lcov
+
+# =========================
+# 🧠 OS & Editor specific
+# =========================
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/*
+!.vscode/extensions.json
+
+# JetBrains IDEs
+.idea/
+
+# Misc IDE/project files
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# =========================
+# 📥 Logs
+# =========================
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# =========================
+# 🧰 Dependency lockfiles (optional to ignore in mono-repo)
+# =========================
+# Uncomment if you want to ignore lockfiles
+# client/package-lock.json
+# server/package-lock.json
