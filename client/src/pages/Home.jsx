@@ -1,160 +1,114 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import patternBg from "../assets/pattern.svg";
+import gymBg from "../assets/gym.jpg";
+import { ChevronRight, Dumbbell } from "lucide-react";
 
 const Home = () => {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const role = localStorage.getItem("role");
-    if (role === "admin") {
-      navigate("/admin/dashboard");
-    } else if (role === "user") {
-      navigate("/user/dashboard");
-    }
-  }, []);
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5,
-        ease: "easeOut",
-      },
-    },
-  };
-
   return (
-    <div 
-      className="min-h-[calc(100vh-6rem)] -mt-24 flex items-center justify-center relative overflow-hidden"
-      style={{
-        backgroundImage: `url(${patternBg})`,
-        backgroundRepeat: "repeat",
-      }}
-    >
-      {/* Background Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-purple-600/10 backdrop-blur-sm" />
-
-      {/* Floating Emojis */}
-      <motion.div
-        className="absolute text-6xl"
-        animate={{
-          y: [0, -20, 0],
-          rotate: [0, 10, 0],
-        }}
-        transition={{
-          duration: 4,
-          repeat: Infinity,
-          repeatType: "reverse",
-        }}
-        style={{ top: "20%", left: "15%" }}
-      >
-        💪
-      </motion.div>
-      <motion.div
-        className="absolute text-6xl"
-        animate={{
-          y: [0, 20, 0],
-          rotate: [0, -10, 0],
-        }}
-        transition={{
-          duration: 5,
-          repeat: Infinity,
-          repeatType: "reverse",
-          delay: 1,
-        }}
-        style={{ bottom: "20%", right: "15%" }}
-      >
-        🏋️‍♂️
-      </motion.div>
-
-      {/* Main Content */}
-      <motion.div
-        className="relative z-10 text-center px-4 max-w-4xl mx-auto"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        <motion.h1 
-          className="text-5xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600"
-          variants={itemVariants}
-        >
-          Welcome to Jordan Fitness Club
-        </motion.h1>
-
-        <motion.div
-          className="relative inline-block mb-8"
-          variants={itemVariants}
-        >
-          <h2 className="text-xl md:text-2xl text-gray-600 dark:text-gray-300">
-            Transform Your Body, Transform Your Life
-          </h2>
+    <>
+      <div 
+        className="background-image"
+        style={{ backgroundImage: `url(${gymBg})` }}
+      />
+      <div className="relative z-10 min-h-screen">
+        <div className="layout-container section-padding">
           <motion.div
-            className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-blue-600 to-purple-600"
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ delay: 0.5, duration: 0.8 }}
-          />
-        </motion.div>
-
-        <motion.div 
-          className="flex flex-col sm:flex-row gap-4 justify-center items-center"
-          variants={itemVariants}
-        >
-          <button
-            onClick={() => navigate("/register")}
-            className="px-8 py-3 bg-blue-600 text-white rounded-full font-semibold text-lg
-                     hover:bg-blue-700 transform hover:scale-105 transition-all duration-300
-                     shadow-lg hover:shadow-blue-500/25"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="max-w-3xl mx-auto text-center"
           >
-            Join Now
-          </button>
-          <button
-            onClick={() => navigate("/login")}
-            className="px-8 py-3 border-2 border-blue-600 text-blue-600 rounded-full font-semibold text-lg
-                     hover:bg-blue-50 transform hover:scale-105 transition-all duration-300"
-          >
-            Login to Track Progress
-          </button>
-        </motion.div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3 }}
+              className="inline-block p-3 bg-accent-primary/10 rounded-2xl mb-6"
+            >
+              <Dumbbell className="w-8 h-8 text-accent-primary animate-float" />
+            </motion.div>
+            
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="text-4xl md:text-6xl font-bold mb-6 gradient-text"
+            >
+              Transform Your Fitness Journey Today
+            </motion.h1>
+            
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7 }}
+              className="text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-8"
+            >
+              Join Jordan Fitness Club and experience state-of-the-art facilities,
+              expert trainers, and a supportive community dedicated to your success.
+            </motion.p>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.9 }}
+              className="flex flex-col sm:flex-row gap-4 justify-center"
+            >
+              <Link to="/register" className="liquid-button group">
+                Get Started
+                <ChevronRight className="inline-block ml-2 group-hover:translate-x-1 transition-transform" />
+              </Link>
+              <Link to="/login" className="glassmorphism px-6 py-3 hover:bg-gray-100 dark:hover:bg-dark-lighter transition-colors">
+                Member Login
+              </Link>
+            </motion.div>
+          </motion.div>
 
-        {/* Features Grid */}
-        <motion.div 
-          className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-16 text-center"
-          variants={itemVariants}
-        >
-          <div className="p-6 rounded-xl bg-white/50 backdrop-blur-sm shadow-xl">
-            <span className="text-3xl mb-4 block">🎯</span>
-            <h3 className="font-semibold mb-2">Set Goals</h3>
-            <p className="text-gray-600">Track your fitness journey</p>
-          </div>
-          <div className="p-6 rounded-xl bg-white/50 backdrop-blur-sm shadow-xl">
-            <span className="text-3xl mb-4 block">💳</span>
-            <h3 className="font-semibold mb-2">Easy Payments</h3>
-            <p className="text-gray-600">Manage memberships</p>
-          </div>
-          <div className="p-6 rounded-xl bg-white/50 backdrop-blur-sm shadow-xl">
-            <span className="text-3xl mb-4 block">📊</span>
-            <h3 className="font-semibold mb-2">Track Progress</h3>
-            <p className="text-gray-600">Monitor your growth</p>
-          </div>
-        </motion.div>
-      </motion.div>
-    </div>
+          {/* Features Grid */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.1 }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-24"
+          >
+            {features.map((feature, index) => (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.1 + index * 0.2 }}
+                className="glassmorphism p-6 rounded-2xl card-hover-effect"
+              >
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="p-3 bg-accent-primary/10 rounded-lg">
+                    {feature.icon}
+                  </div>
+                  <h3 className="text-xl font-semibold">{feature.title}</h3>
+                </div>
+                <p className="text-gray-600 dark:text-gray-300">{feature.description}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </div>
+    </>
   );
 };
+
+const features = [
+  {
+    title: "Modern Equipment",
+    description: "State-of-the-art fitness equipment for optimal workouts",
+    icon: <Dumbbell className="w-6 h-6 text-accent-primary" />,
+  },
+  {
+    title: "Expert Trainers",
+    description: "Professional trainers to guide your fitness journey",
+    icon: <Dumbbell className="w-6 h-6 text-accent-primary" />,
+  },
+  {
+    title: "Flexible Plans",
+    description: "Choose from various membership plans that suit your needs",
+    icon: <Dumbbell className="w-6 h-6 text-accent-primary" />,
+  },
+];
 
 export default Home;
