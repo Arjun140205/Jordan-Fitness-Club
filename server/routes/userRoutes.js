@@ -1,10 +1,10 @@
 import express from "express";
-import protect from "../middleware/authMiddleware.js";
+import { authMiddleware } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
 // Get user dashboard data
-router.get("/dashboard", protect, (req, res) => {
+router.get("/dashboard", authMiddleware, (req, res) => {
   console.log("Dashboard request received for user:", req.user); // Debug
   
   try {
