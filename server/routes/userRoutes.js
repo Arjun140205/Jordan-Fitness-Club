@@ -3,20 +3,42 @@ import protect from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// Sample data - can be later replaced with DB values
+// Get user dashboard data
 router.get("/dashboard", protect, (req, res) => {
-  res.json({
-    name: "John Doe",
-    email: req.user.email,
-    currentPlan: "6-Month Muscle Gain Plan",
-    feeStatus: "Pending",
-    upcomingPlans: [
-      "One Month Flex Plan",
-      "HIIT + Diet Combo",
-      "Annual Discount Package",
-    ],
-    qrCodeImage: "https://api.qrserver.com/v1/create-qr-code/?data=upi://pay&size=200x200"
-  });
+  console.log("Dashboard request received for user:", req.user); // Debug
+  
+  try {
+    // Get current date
+    const currentDate = new Date();
+    // Set plan end date to 30 days from registration
+    const planEndDate = new Date(req.user.createdAt || currentDate);
+    planEndDate.setDate(planEndDate.getDate() + 30);
+
+    const dashboardData = {
+      name: req.user.name || "User",
+      email: req.user.email,
+      currentPlan: "1-Month Trial Plan",
+      planEndDate: planEndDate.toISOString(),
+      feeStatus: "Pending",
+      membershipId: req.user._id,
+      joinedOn: req.user.createdAt,
+      upcomingPlans: [
+        "One Month Flex Plan",
+        "HIIT + Diet Combo",
+        "Annual Discount Package",
+      ],
+      stats: {
+        daysActive: Math.floor((currentDate - new Date(req.user.createdAt)) / (1000 * 60 * 60 * 24)),
+        workoutsCompleted: 0,
+        averageRating: 4.5
+      }
+    };
+
+    res.json(dashboardData);
+  } catch (error) {
+    console.error("Dashboard error:", error);
+    res.status(500).json({ message: "Error fetching dashboard data", error: error.message });
+  }
 });
 
 export default router;
