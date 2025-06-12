@@ -9,8 +9,22 @@ dotenv.config();
 const app = express();
 
 // Middlewares
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173', // Update this if your Vite dev server is on a different port
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
+
+// Debug middleware
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`, {
+    headers: req.headers,
+    body: req.body
+  });
+  next();
+});
 
 // Routes
 app.use("/api/auth", authRoutes);
