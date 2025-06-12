@@ -9,4 +9,10 @@ export const endpoints = {
     dashboard: `${API_URL}/user/dashboard`,
     profile: `${API_URL}/user/profile`,
   },
+  admin: {
+    dashboard: `${API_URL}/admin/dashboard`,
+    users: `${API_URL}/admin/users`,
+    payments: `${API_URL}/admin/payments`,
+    plans: `${API_URL}/admin/plans`,
+  },
 };
