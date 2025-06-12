@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tab } from "@headlessui/react";
 import { motion } from "framer-motion";
+import axios from "axios";
+import { toast } from "react-hot-toast";
 import {
   Users,
   CreditCard,
@@ -15,23 +17,55 @@ import {
 } from "lucide-react";
 import StatCard from "../components/StatCard";
 import DataTable from "../components/DataTable";
+import { endpoints } from "../constants/config";
+import Skeleton from "../components/Skeleton";
 
 const AdminDashboard = () => {
   const [selectedTab, setSelectedTab] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [dashboardData, setDashboardData] = useState({
+    stats: {
+      totalUsers: 0,
+      pendingPayments: 0,
+      activePlans: 0,
+      totalRevenue: "$0"
+    },
+    users: []
+  });
 
-  // Sample data - replace with actual API calls
-  const stats = {
-    totalUsers: 156,
-    pendingPayments: 23,
-    activePlans: 134,
-    totalRevenue: "$15,670"
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const token = localStorage.getItem("token");
+      
+      if (!token) {
+        throw new Error("No authentication token found");
+      }
+
+      const response = await axios.get(`${endpoints.admin.dashboard}`, {
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      setDashboardData(response.data);
+    } catch (err) {
+      console.error("Dashboard error:", err);
+      setError(err.message);
+      toast.error("Failed to load dashboard data. " + err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const users = [
-    { id: 1, name: "John Doe", plan: "Premium", status: "Active", joinDate: "2025-01-15" },
-    { id: 2, name: "Jane Smith", plan: "Basic", status: "Pending", joinDate: "2025-02-20" },
-    // Add more sample data
-  ];
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
+
+  const { stats, users } = dashboardData;
 
   const columns = [
     {
@@ -83,6 +117,38 @@ const AdminDashboard = () => {
     hover:shadow-xl
   `;
 
+  if (loading) {
+    return (
+      <div className="p-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="h-32 bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/50 animate-pulse" />
+          ))}
+        </div>
+        <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/50">
+          <Skeleton count={5} />
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-6">
+        <div className="bg-red-50 border border-red-200 rounded-2xl p-6 text-center">
+          <h3 className="text-red-800 text-lg font-medium mb-2">Error Loading Dashboard</h3>
+          <p className="text-red-600">{error}</p>
+          <button 
+            onClick={fetchDashboardData}
+            className={getButtonStyles("bg-red-600 hover:bg-red-700") + " mt-4 mx-auto"}
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+  
   return (
     <div className="p-6">
       {/* Stats Section */}
@@ -150,11 +216,19 @@ const AdminDashboard = () => {
                   Add New User
                 </button>
               </div>
-              <DataTable
-                data={users}
-                columns={columns}
-                searchField="name"
-              />
+              {loading ? (
+                <Skeleton count={5} />
+              ) : error ? (
+                <div className="text-red-500 text-center py-4">
+                  {error}
+                </div>
+              ) : (
+                <DataTable
+                  data={users}
+                  columns={columns}
+                  searchField="name"
+                />
+              )}
             </div>
           </Tab.Panel>
 
