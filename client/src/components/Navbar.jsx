@@ -16,38 +16,48 @@ const Navbar = () => {
     <motion.nav
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      className="max-w-[var(--max-width)] mx-auto px-4 py-8 flex items-center justify-between gap-8"
+      className="fixed w-full top-0 left-0 right-0 z-50 bg-[var(--primary-color)] shadow-lg"
     >
-      <Link to="/" className="nav-logo max-w-[150px]">
-        <img src={logo} alt="Jordan Fitness Club" />
-      </Link>
+      <div className="max-w-[var(--max-width)] mx-auto px-4 py-4 flex items-center justify-between">
+        <Link to="/" className="nav-logo max-w-[150px]">
+          <img src={logo} alt="Jordan Fitness Club" className="h-12" />
+        </Link>
 
-      <ul className="nav-links hidden md:flex items-center gap-12">
-        <li><Link to="/" className="nav-link">Home</Link></li>
-        <li><Link to="/programs" className="nav-link">Program</Link></li>
-        <li><Link to="/services" className="nav-link">Service</Link></li>
-        <li><Link to="/about" className="nav-link">About</Link></li>
-        <li><Link to="/community" className="nav-link">Community</Link></li>
-      </ul>
+        <ul className="nav-links hidden md:flex items-center gap-12">
+          <li>
+            <Link to="/" className="nav-link">Home</Link>
+          </li>
+          {isAuthenticated && (
+            <li>
+              <Link 
+                to={user?.role === 'admin' ? '/admin' : '/dashboard'}
+                className="nav-link"
+              >
+                Dashboard
+              </Link>
+            </li>
+          )}
+        </ul>
 
-      <div className="flex items-center gap-4">
-        {isAuthenticated ? (
-          <>
-            <Link 
-              to={user?.role === 'admin' ? '/admin' : '/dashboard'}
-              className="nav-link"
+        <div className="flex items-center gap-6">
+          {isAuthenticated ? (
+            <button 
+              onClick={handleLogout} 
+              className="btn-primary py-2 px-6"
             >
-              Dashboard
-            </Link>
-            <button onClick={handleLogout} className="btn-primary">
               Logout
             </button>
-          </>
-        ) : (
-          <Link to="/register" className="btn-primary">
-            Join Now
-          </Link>
-        )}
+          ) : (
+            <>
+              <Link to="/login" className="nav-link">
+                Login
+              </Link>
+              <Link to="/register" className="btn-primary py-2 px-6">
+                Join Now
+              </Link>
+            </>
+          )}
+        </div>
       </div>
     </motion.nav>
   );
