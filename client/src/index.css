@@ -35,15 +35,11 @@
 
 @layer utilities {
   .gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r 
-           from-blue-600 to-purple-600
-           dark:from-blue-400 dark:to-purple-400;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 animate-gradient;
   }
   
   .glassmorphism {
-    @apply bg-white/70 dark:bg-gray-800/70 
-           backdrop-blur-md border border-white/50 
-           dark:border-gray-700/50 shadow-lg;
+    @apply bg-white/70 dark:bg-dark-lighter/70 backdrop-blur-md border border-white/50 dark:border-dark-lighter/50 shadow-lg hover:shadow-xl hover:border-white/60 dark:hover:border-dark-lighter/60 transition-all duration-300;
   }
 
   .layout-container {
@@ -52,6 +48,32 @@
 
   .section-padding {
     @apply py-12 sm:py-16 lg:py-24;
+  }
+
+  .liquid-button {
+    @apply relative overflow-hidden bg-gradient-to-r from-accent-primary to-accent-secondary text-white rounded-lg px-6 py-3 animate-liquid transition-all duration-500 hover:shadow-lg hover:scale-105;
+  }
+
+  .liquid-button::before {
+    content: '';
+    @apply absolute inset-0 bg-white/20 translate-x-[-100%] transition-transform duration-700;
+  }
+
+  .liquid-button:hover::before {
+    @apply translate-x-[100%];
+  }
+
+  .card-hover-effect {
+    @apply transition-all duration-300 hover:translate-y-[-8px] hover:shadow-xl hover:shadow-accent-primary/20 dark:hover:shadow-accent-primary/10;
+  }
+
+  .background-image {
+    @apply fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat opacity-[0.15] transition-opacity duration-700;
+  }
+
+  .background-image::after {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-b from-white/0 to-white/80 dark:from-dark/0 dark:to-dark/80;
   }
 }
 
