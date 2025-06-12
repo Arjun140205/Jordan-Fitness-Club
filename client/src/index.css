@@ -1,35 +1,88 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --gradient-light: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
-  --gradient-dark: linear-gradient(135deg, #1a1f2d 0%, #121720 100%);
+  --primary-color: #111317;
+  --primary-color-light: #1f2125;
+  --primary-color-extra-light: #35373b;
+  --secondary-color: #f9ac54;
+  --secondary-color-dark: #d79447;
+  --text-light: #d1d5db;
+  --white: #ffffff;
+  --max-width: 1200px;
 }
 
 @layer base {
   html {
     font-family: 'Outfit', system-ui, sans-serif;
   }
+  
+  body {
+    @apply font-['Poppins'] min-h-screen bg-[var(--primary-color)];
+  }
 }
 
 @layer components {
   .btn-primary {
-    @apply rounded-lg border border-transparent px-4 py-2
-           text-base font-medium
-           bg-gray-800 text-white hover:bg-gray-700
-           dark:bg-gray-700 dark:hover:bg-gray-600
-           cursor-pointer transition-all duration-200
-           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-           disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply px-8 py-4 outline-none border-none text-base text-white
+           bg-[var(--secondary-color)] rounded-lg cursor-pointer
+           transition-all duration-300 hover:bg-[var(--secondary-color-dark)];
   }
 
   .link {
     @apply font-medium text-blue-600 hover:text-blue-700
            dark:text-blue-400 dark:hover:text-blue-300
            no-underline transition-colors;
+  }
+
+  .bg-blur {
+    @apply absolute -z-10;
+    box-shadow: 0 0 1000px 50px var(--secondary-color);
+  }
+
+  .nav-link {
+    @apply relative pb-3 text-white;
+  }
+
+  .nav-link::after {
+    content: "";
+    @apply absolute h-0.5 w-0 left-0 bottom-0 bg-[var(--secondary-color)] transition-all duration-300;
+  }
+
+  .nav-link:hover::after {
+    @apply w-1/2;
+  }
+
+  .section-container {
+    @apply max-w-[var(--max-width)] mx-auto px-4 py-20;
+  }
+
+  .section-header {
+    @apply mb-4 text-4xl font-semibold text-center text-white;
+  }
+
+  .section-subheader {
+    @apply max-w-xl mx-auto text-center text-[var(--text-light)];
+  }
+
+  .glassmorphism {
+    @apply bg-white/70 backdrop-blur-md 
+           border border-white/50
+           shadow-lg hover:shadow-xl transition-all duration-300;
+  }
+  
+  :root[class~="dark"] .glassmorphism {
+    background-color: rgba(var(--primary-color-light), 0.7);
+    border-color: rgba(var(--primary-color-light), 0.5);
+  }
+
+  .card-hover {
+    @apply border-2 border-transparent hover:border-[var(--secondary-color)]
+           hover:bg-[var(--primary-color-extra-light)] transition-all duration-300;
   }
 }
 
