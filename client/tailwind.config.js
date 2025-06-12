@@ -15,6 +15,15 @@ const config = {
         sans: ['Outfit', 'system-ui', 'sans-serif'],
       },
       colors: {
+        primary: {
+          DEFAULT: 'var(--primary-color)',
+          light: 'var(--primary-color-light)',
+          'extra-light': 'var(--primary-color-extra-light)',
+        },
+        secondary: {
+          DEFAULT: 'var(--secondary-color)',
+          dark: 'var(--secondary-color-dark)',
+        },
         dark: {
           DEFAULT: '#0f172a',
           lighter: '#1e293b',
