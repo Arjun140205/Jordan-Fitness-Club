@@ -1,7 +1,8 @@
 // routes/adminRoutes.js (Replace /notify)
 import NotificationLog from "../models/NotificationLog.js";
 import twilio from "twilio";
-
+import { getNotificationLogs } from "../controllers/adminController.js";
+router.get("/logs", authMiddleware, getNotificationLogs);
 const twilioClient = twilio(
   process.env.TWILIO_ACCOUNT_SID,
   process.env.TWILIO_AUTH_TOKEN
