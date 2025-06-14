@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Skeleton } from "./Skeleton";
+import Skeleton from "./Skeleton";
 import { toast } from "react-hot-toast";
 import { endpoints } from "../constants/config";
 
