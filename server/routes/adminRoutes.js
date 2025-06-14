@@ -1,42 +1,101 @@
 import express from "express";
-import User from "../models/User.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
+import User from "../models/User.js";
+import nodemailer from "nodemailer";
 
 const router = express.Router();
 
-// Middleware to check if user is admin
-const isAdmin = (req, res, next) => {
-  if (req.user && req.user.role === "admin") {
-    next();
-  } else {
-    res.status(403).json({ message: "Access denied. Admin only." });
-  }
-};
-
-// Get dashboard stats
-router.get("/dashboard", authMiddleware, isAdmin, async (req, res) => {
+// @route   GET /api/admin/dashboard
+// @desc    Admin dashboard stats and user list
+router.get("/dashboard", authMiddleware, async (req, res) => {
   try {
-    const totalUsers = await User.countDocuments();
-    const activeUsers = await User.countDocuments({ status: "active" });
+    const users = await User.find().sort({ createdAt: -1 });
 
-    // Sample data - replace with actual database queries
-    const dashboardData = {
+    const totalUsers = users.length;
+    const pendingPayments = users.length; // Mocked: assuming all pending
+    const activePlans = 0; // Replace with actual logic
+    const totalRevenue = "₹0"; // Replace with actual logic
+
+    const formattedUsers = users.map(user => {
+      const joinDate = new Date(user.createdAt);
+      const planEndDate = new Date(joinDate);
+      planEndDate.setDate(planEndDate.getDate() + 30);
+
+      return {
+        name: user.name,
+        email: user.email,
+        phone: user.phone || "Not Provided",
+        plan: "1-Month Trial Plan",
+        status: "Pending", // Replace with actual fee status later
+        joinDate: joinDate.toISOString().split('T')[0],
+        planEndDate: planEndDate.toISOString().split('T')[0],
+      };
+    });
+
+    res.json({
       stats: {
-        totalUsers: totalUsers,
-        pendingPayments: Math.floor(totalUsers * 0.15), // Example: 15% of users have pending payments
-        activePlans: activeUsers,
-        totalRevenue: `$${Math.floor(totalUsers * 100)}` // Example: $100 per user
+        totalUsers,
+        pendingPayments,
+        activePlans,
+        totalRevenue,
       },
-      users: await User.find()
-        .select("name email role status createdAt plan")
-        .sort({ createdAt: -1 })
-        .limit(10)
-    };
-
-    res.json(dashboardData);
+      users: formattedUsers,
+    });
   } catch (error) {
     console.error("Admin dashboard error:", error);
-    res.status(500).json({ message: "Error fetching admin dashboard data", error: error.message });
+    res.status(500).json({ message: "Failed to load dashboard", error: error.message });
+  }
+});
+
+// @route   POST /api/admin/notify
+// @desc    Send pending fee reminder to all users via email and SMS
+router.post("/notify", authMiddleware, async (req, res) => {
+  try {
+    const users = await User.find();
+
+    // Setup nodemailer transporter (adjust as per your SMTP settings)
+    const transporter = nodemailer.createTransport({
+      service: "gmail", // or use host/port/auth
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    const sendResults = [];
+
+    for (const user of users) {
+      const emailMessage = {
+        from: `"Jordan Fitness Club" <${process.env.EMAIL_USER}>`,
+        to: user.email,
+        subject: "Pending Fee Reminder",
+        html: `
+          <p>Dear ${user.name},</p>
+          <p>${req.body.message || "This is a gentle reminder that your gym membership fee is pending."}</p>
+          <p>Please clear it to continue enjoying our services.</p>
+          <p>Thank you! <br/> Jordan Fitness Club</p>
+        `,
+      };
+
+      // Send email
+      const emailResult = await transporter.sendMail(emailMessage);
+
+      // [Optional] Send SMS via your SMS provider's API here using `user.phone`
+
+      sendResults.push({
+        name: user.name,
+        email: user.email,
+        emailStatus: emailResult.accepted ? "Sent" : "Failed",
+      });
+    }
+
+    res.json({
+      message: "Notifications sent",
+      results: sendResults,
+    });
+  } catch (error) {
+    console.error("Notification error:", error);
+    res.status(500).json({ message: "Failed to send notifications", error: error.message });
   }
 });
 
