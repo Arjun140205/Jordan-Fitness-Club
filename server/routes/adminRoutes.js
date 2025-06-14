@@ -2,100 +2,108 @@ import express from "express";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 import User from "../models/User.js";
 import nodemailer from "nodemailer";
+import axios from "axios";
 
 const router = express.Router();
 
-// @route   GET /api/admin/dashboard
-// @desc    Admin dashboard stats and user list
-router.get("/dashboard", authMiddleware, async (req, res) => {
-  try {
-    const users = await User.find().sort({ createdAt: -1 });
-
-    const totalUsers = users.length;
-    const pendingPayments = users.length; // Mocked: assuming all pending
-    const activePlans = 0; // Replace with actual logic
-    const totalRevenue = "₹0"; // Replace with actual logic
-
-    const formattedUsers = users.map(user => {
-      const joinDate = new Date(user.createdAt);
-      const planEndDate = new Date(joinDate);
-      planEndDate.setDate(planEndDate.getDate() + 30);
-
-      return {
-        name: user.name,
-        email: user.email,
-        phone: user.phone || "Not Provided",
-        plan: "1-Month Trial Plan",
-        status: "Pending", // Replace with actual fee status later
-        joinDate: joinDate.toISOString().split('T')[0],
-        planEndDate: planEndDate.toISOString().split('T')[0],
-      };
-    });
-
-    res.json({
-      stats: {
-        totalUsers,
-        pendingPayments,
-        activePlans,
-        totalRevenue,
-      },
-      users: formattedUsers,
-    });
-  } catch (error) {
-    console.error("Admin dashboard error:", error);
-    res.status(500).json({ message: "Failed to load dashboard", error: error.message });
-  }
-});
-
 // @route   POST /api/admin/notify
-// @desc    Send pending fee reminder to all users via email and SMS
+// @desc    Notify unpaid users via email and SMS
 router.post("/notify", authMiddleware, async (req, res) => {
   try {
-    const users = await User.find();
+    const unpaidUsers = await User.find({ feeStatus: "Pending" });
 
-    // Setup nodemailer transporter (adjust as per your SMTP settings)
+    if (unpaidUsers.length === 0) {
+      return res.status(200).json({ message: "No unpaid users found." });
+    }
+
+    // 1. Setup Nodemailer (Gmail)
     const transporter = nodemailer.createTransport({
-      service: "gmail", // or use host/port/auth
+      service: "gmail",
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
       },
     });
 
-    const sendResults = [];
+    const results = [];
 
-    for (const user of users) {
-      const emailMessage = {
+    for (const user of unpaidUsers) {
+      const name = user.name;
+      const email = user.email;
+      const phone = user.phone;
+      const endDate = user.planEndDate
+        ? new Date(user.planEndDate).toLocaleDateString("en-IN")
+        : "N/A";
+
+      // 2. Compose personalized email
+      const mailOptions = {
         from: `"Jordan Fitness Club" <${process.env.EMAIL_USER}>`,
-        to: user.email,
-        subject: "Pending Fee Reminder",
+        to: email,
+        subject: "⏳ Pending Gym Fee Reminder",
         html: `
-          <p>Dear ${user.name},</p>
-          <p>${req.body.message || "This is a gentle reminder that your gym membership fee is pending."}</p>
-          <p>Please clear it to continue enjoying our services.</p>
-          <p>Thank you! <br/> Jordan Fitness Club</p>
+          <p>Dear <strong>${name}</strong>,</p>
+          <p>We noticed that your gym membership fee is still <b>pending</b>.</p>
+          <p>Your plan ends on: <strong>${endDate}</strong></p>
+          <p>Please clear your dues to continue uninterrupted access to our facilities.</p>
+          <p>Best regards,<br/>Jordan Fitness Club</p>
         `,
       };
 
-      // Send email
-      const emailResult = await transporter.sendMail(emailMessage);
+      // 3. Send email
+      let emailStatus = "Not Sent";
+      try {
+        await transporter.sendMail(mailOptions);
+        emailStatus = "Sent";
+      } catch (err) {
+        console.error(`Email to ${email} failed:`, err.message);
+        emailStatus = "Failed";
+      }
 
-      // [Optional] Send SMS via your SMS provider's API here using `user.phone`
+      // 4. Send SMS via Fast2SMS API (FREE tier)
+      let smsStatus = "Not Sent";
+      try {
+        await axios.post(
+          "https://www.fast2sms.com/dev/bulkV2",
+          {
+            variables_values: `${name}|${endDate}`,
+            route: "v3",
+            numbers: phone,
+            message: "Dear #VAR1#, your gym fee is pending. Plan ends on #VAR2#. - Jordan Fitness Club",
+          },
+          {
+            headers: {
+              Authorization: process.env.FAST2SMS_API_KEY,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        smsStatus = "Sent";
+      } catch (err) {
+        console.error(`SMS to ${phone} failed:`, err.message);
+        smsStatus = "Failed";
+      }
 
-      sendResults.push({
-        name: user.name,
-        email: user.email,
-        emailStatus: emailResult.accepted ? "Sent" : "Failed",
+      // Collect result
+      results.push({
+        name,
+        email,
+        phone,
+        emailStatus,
+        smsStatus,
       });
     }
 
     res.json({
-      message: "Notifications sent",
-      results: sendResults,
+      message: "Notifications sent to unpaid users",
+      totalNotified: results.length,
+      results,
     });
   } catch (error) {
-    console.error("Notification error:", error);
-    res.status(500).json({ message: "Failed to send notifications", error: error.message });
+    console.error("Notify error:", error);
+    res.status(500).json({
+      message: "Failed to send notifications",
+      error: error.message,
+    });
   }
 });
 
