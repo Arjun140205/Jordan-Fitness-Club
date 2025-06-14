@@ -48,7 +48,9 @@ const Login = () => {
       
       // Redirect with a smooth transition
       setTimeout(() => {
-        if (res.data.role === "admin") {
+        const userRole = res.data.user?.role || res.data.role;
+        console.log("User role:", userRole); // Debug log
+        if (userRole === "admin") {
           navigate("/admin");
         } else {
           navigate("/dashboard");
