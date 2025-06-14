@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import "./home.css";
+import MembershipSection from "../components/MembershipSection";
 import { 
   RiBoxingFill, 
   RiHeartPulseFill, 
@@ -115,7 +116,70 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Continue with other sections... */}
+      <section className="section-container">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-12"
+        >
+          <h2 className="text-4xl font-bold text-white mb-4">WHY JORDAN FITNESS CLUB?</h2>
+          <p className="text-[var(--text-light)] max-w-2xl mx-auto">
+            We offer more than just a workout - we provide an experience that transforms lives through fitness, community, and expert guidance.
+          </p>
+        </motion.div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="bg-[var(--primary-color-light)] rounded-xl overflow-hidden"
+          >
+            <img src={class1Image} alt="Equipment" className="w-full h-48 object-cover" />
+            <div className="p-6">
+              <h3 className="text-xl font-bold text-white mb-2">Modern Equipment</h3>
+              <p className="text-[var(--text-light)]">
+                State-of-the-art facilities with the latest fitness technology and equipment.
+              </p>
+            </div>
+          </motion.div>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="bg-[var(--primary-color-light)] rounded-xl overflow-hidden"
+          >
+            <img src={class2Image} alt="Training" className="w-full h-48 object-cover" />
+            <div className="p-6">
+              <h3 className="text-xl font-bold text-white mb-2">Expert Trainers</h3>
+              <p className="text-[var(--text-light)]">
+                Certified professionals dedicated to helping you achieve your fitness goals.
+              </p>
+            </div>
+          </motion.div>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4 }}
+            className="bg-[var(--primary-color-light)] rounded-xl overflow-hidden"
+          >
+            <img src={memberImage} alt="Community" className="w-full h-48 object-cover" />
+            <div className="p-6">
+              <h3 className="text-xl font-bold text-white mb-2">Strong Community</h3>
+              <p className="text-[var(--text-light)]">
+                Join a supportive community that motivates and inspires you to be your best.
+              </p>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      <MembershipSection />
     </div>
   );
 };
