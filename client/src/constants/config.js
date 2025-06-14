@@ -14,5 +14,6 @@ export const endpoints = {
     users: `${API_URL}/admin/users`,
     payments: `${API_URL}/admin/payments`,
     plans: `${API_URL}/admin/plans`,
+    logs: `${API_URL}/admin/notification-logs`,
   },
 };
