@@ -66,7 +66,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   const login = async (userData) => {
-    setUser(userData.user);
+    const userInfo = userData.user || { role: userData.role };
+    setUser(userInfo);
     setIsAuthenticated(true);
 
     // Update last login time
@@ -75,7 +76,10 @@ export const AuthProvider = ({ children }) => {
     // Set session data
     if (userData.token) {
       localStorage.setItem('token', userData.token);
+      localStorage.setItem('role', userInfo.role);
     }
+
+    console.log("Logged in as:", userInfo.role); // Debug log
   };
 
   const handleLogout = () => {
