@@ -96,21 +96,26 @@ const AdminDashboard = () => {
     }
   };
 
-  const sendNotifications = async () => {
+  const sendPaymentReminders = async () => {
+    // Show confirmation dialog
+    if (!window.confirm("Are you sure you want to send payment reminders to all users with pending payments?")) {
+      return;
+    }
+
     try {
       setNotifying(true);
       const token = localStorage.getItem("token");
-      const response = await axios.post(`${endpoints.admin.notify}`, {}, {
+      const response = await axios.post(`${endpoints.admin.notifyPayments}`, {}, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
       const { results } = response.data;
-      toast.success(`Notifications sent to ${results.length} users.`);
+      toast.success(`Payment reminders sent to ${results.length} users with pending payments.`);
     } catch (err) {
-      console.error("Notify error:", err);
-      toast.error("Failed to send notifications. " + err.message);
+      console.error("Payment reminder error:", err);
+      toast.error("Failed to send payment reminders. " + err.message);
     } finally {
       setNotifying(false);
     }
@@ -250,28 +255,48 @@ const AdminDashboard = () => {
           <Tab.Panel>
             <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/50">
               <h3 className="text-xl font-semibold mb-6">Send SMS Notifications</h3>
-              <div className="space-y-4">
-                <textarea
-                  value={smsMessage}
-                  onChange={(e) => setSmsMessage(e.target.value)}
-                  className="w-full h-32 px-4 py-2 rounded-lg bg-white/70 backdrop-blur-sm border
-                           border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Type your message here..."
-                />
-                <button
-                  onClick={sendNotification}
-                  disabled={isSending}
-                  className={`${getButtonStyles("bg-blue-600 hover:bg-blue-700")} ${
-                    isSending ? "opacity-50 cursor-not-allowed" : ""
-                  }`}
-                >
-                  {isSending ? "Sending..." : (
-                    <>
-                      <Send className="w-5 h-5" />
-                      Send Notification
-                    </>
-                  )}
-                </button>
+              <div className="space-y-6">
+                <div className="space-y-4">
+                  <textarea
+                    value={smsMessage}
+                    onChange={(e) => setSmsMessage(e.target.value)}
+                    className="w-full h-32 px-4 py-2 rounded-lg bg-white/70 backdrop-blur-sm border
+                             border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Type your message here..."
+                  />
+                  <button
+                    onClick={sendNotification}
+                    disabled={isSending}
+                    className={`${getButtonStyles("bg-blue-600 hover:bg-blue-700")} ${
+                      isSending ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
+                  >
+                    {isSending ? "Sending..." : (
+                      <>
+                        <Send className="w-5 h-5" />
+                        Send Custom Notification
+                      </>
+                    )}
+                  </button>
+                </div>
+                
+                <div className="border-t pt-6">
+                  <h4 className="text-lg font-medium mb-4">Quick Actions</h4>
+                  <button
+                    onClick={sendPaymentReminders}
+                    disabled={notifying}
+                    className={`${getButtonStyles("bg-orange-600 hover:bg-orange-700")} ${
+                      notifying ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
+                  >
+                    {notifying ? "Sending Reminders..." : (
+                      <>
+                        <CreditCard className="w-5 h-5" />
+                        Send Payment Reminders
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
           </Tab.Panel>
