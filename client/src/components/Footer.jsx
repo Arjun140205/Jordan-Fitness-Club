@@ -20,9 +20,9 @@ const Footer = () => {
   ];
 
   const contactInfo = [
-    { icon: Phone, text: '+1 (555) 123-4567', href: 'tel:+15551234567' },
-    { icon: Mail, text: 'info@jordanfitnessclub.com', href: 'mailto:info@jordanfitnessclub.com' },
-    { icon: MapPin, text: '123 Fitness Street, NY 10001', href: 'https://maps.google.com' },
+    { icon: Phone, text: '+91 9596951004 ', href: 'tel:+919596951004' },
+    { icon: Mail, text: 'jordanfitnessclub1@gmail.com', href: 'mailto:jordanfitnessclub1@gmail.com' },
+    { icon: MapPin, text: 'Sarwan Singh market power house road, near jamia masjid, main bazar, Poonch, J and K 185101', href: 'https://maps.google.com' },
   ];
 
   const footerLinks = [
