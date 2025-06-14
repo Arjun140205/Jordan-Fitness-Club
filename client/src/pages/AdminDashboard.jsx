@@ -19,6 +19,7 @@ import StatCard from "../components/StatCard";
 import DataTable from "../components/DataTable";
 import { endpoints } from "../constants/config";
 import Skeleton from "../components/Skeleton";
+import NotificationLogs from "../components/NotificationLogs";
 
 const AdminDashboard = () => {
   const [selectedTab, setSelectedTab] = useState(0);
@@ -224,6 +225,7 @@ const AdminDashboard = () => {
             { name: "View Payments", icon: CreditCard },
             { name: "Send SMS", icon: MessageSquare },
             { name: "Add Plan", icon: Plus },
+            { name: "Notification Logs", icon: ClipboardList },
           ].map((tab, idx) => (
             <Tab key={idx} className={({ selected }) => `w-full rounded-lg py-3 px-4 text-sm font-medium leading-5 text-gray-700 flex items-center justify-center gap-2 ${selected ? "bg-white shadow" : "text-gray-600 hover:bg-white/[0.12] hover:text-gray-800"}`}>
               {tab.icon && <tab.icon className="w-4 h-4" />}
@@ -310,6 +312,14 @@ const AdminDashboard = () => {
                 <input type="number" placeholder="Price" className="w-full px-4 py-2 rounded-lg bg-white/70 backdrop-blur-sm border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500" />
                 <button className={getButtonStyles("bg-blue-600 hover:bg-blue-700")}> <Plus className="w-5 h-5" /> Add Plan </button>
               </div>
+            </div>
+          </Tab.Panel>
+
+          {/* Notification Logs Panel */}
+          <Tab.Panel>
+            <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/50">
+              <h3 className="text-xl font-semibold mb-6">Notification Logs</h3>
+              <NotificationLogs />
             </div>
           </Tab.Panel>
         </Tab.Panels>
