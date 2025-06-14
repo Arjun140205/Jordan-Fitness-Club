@@ -53,7 +53,7 @@ const Navbar = () => {
                 Login
               </Link>
               <Link to="/register" className="btn-primary py-2 px-6">
-                Join Now
+                Join Now Fast
               </Link>
             </>
           )}
