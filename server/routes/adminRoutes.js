@@ -125,3 +125,16 @@ router.post("/notify", authMiddleware, async (req, res) => {
     res.status(500).json({ message: "Notification failed", error: error.message });
   }
 });
+
+router.get("/logs", authMiddleware, async (req, res) => {
+  try {
+    const logs = await NotificationLog.find()
+      .sort({ createdAt: -1 })
+      .limit(100); // most recent 100 logs
+
+    res.json({ logs });
+  } catch (error) {
+    console.error("Log fetch error:", error);
+    res.status(500).json({ message: "Failed to fetch logs", error: error.message });
+  }
+});
