@@ -43,7 +43,7 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-green-50 to-blue-50">
+    <div className="min-h-screen flex items-center justify-center p-4 glossy-black">
       {/* Background Pattern */}
       <div className="absolute inset-0 z-0 opacity-40"
         style={{
