@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import "./home.css";
 import MembershipSection from "../components/MembershipSection";
-import logo from "../assets/logo.png";
 import { 
   RiBoxingFill, 
   RiHeartPulseFill, 
@@ -19,7 +18,6 @@ import {
   RiStarHalfFill,
   RiFacebookFill,
   RiInstagramLine,
-  RiTwitterFill
 } from "react-icons/ri";
 
 import headerImage from "../assets/header.png";
@@ -31,21 +29,6 @@ import memberImage from "../assets/member.jpg";
 const Home = () => {
   return (
     <div className="min-h-screen bg-black text-white">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
-        className="fixed top-8 right-12 z-50"
-      >
-        <div className="logo-container rounded-full p-0.5 bg-gradient-to-r from-white/10 to-transparent backdrop-blur-[2px]">
-          <img 
-            src={logo} 
-            alt="Jordan Fitness Club Logo" 
-            className="w-24 h-24 rounded-full object-cover filter contrast-110 brightness-105 hover:scale-102 transition-transform duration-300"
-          />
-        </div>
-      </motion.div>
-
       <header className="section-container">
         <motion.div 
           initial={{ opacity: 0 }}
