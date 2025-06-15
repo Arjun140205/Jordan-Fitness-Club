@@ -100,8 +100,8 @@ const UserDashboard = () => {
             className="bg-[var(--primary-color-light)] p-6 rounded-xl"
           >
             <div className="flex items-center gap-3 mb-4">
-              <div className="p-3 bg-blue-500/20 rounded-lg">
-                <CreditCard className="w-6 h-6 text-blue-500" />
+              <div className="p-3 glossy-black rounded-lg bg-opacity-20">
+                <CreditCard className="w-6 h-6 text-white" />
               </div>
               <div>
                 <h3 className="text-xl font-semibold text-white">{data.membershipType}</h3>
