@@ -134,8 +134,8 @@ const UserDashboard = () => {
             className="bg-[var(--primary-color-light)] p-6 rounded-xl"
           >
             <div className="flex items-center gap-3 mb-4">
-              <div className="p-3 bg-orange-500/20 rounded-lg">
-                <AlertTriangle className="w-6 h-6 text-orange-500" />
+              <div className="p-3 bg-gradient-to-r from-[#fce51d]/20 to-[#fec62c]/20 rounded-lg">
+                <AlertTriangle className="w-6 h-6 text-[#fec62c]" />
               </div>
               <div>
                 <h3 className="text-xl font-semibold text-white">Payment Status</h3>
