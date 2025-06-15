@@ -144,7 +144,7 @@ const AdminDashboard = () => {
         <span className={`px-2 py-1 rounded-full text-xs
           ${row.original.status === "Active"
             ? "bg-green-100 text-green-800"
-            : "bg-orange-100 text-orange-800"
+            : "bg-gradient-to-r from-[#fce51d]/10 to-[#fec62c]/10 text-[#fec62c]"
           }`}>
           {row.original.status}
         </span>
@@ -213,7 +213,7 @@ const AdminDashboard = () => {
     <div className="p-6">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <StatCard title="Total Users" value={stats.totalUsers} icon={Users} color="bg-blue-500" />
-        <StatCard title="Pending Payments" value={stats.pendingPayments} icon={CreditCard} color="bg-orange-500" />
+        <StatCard title="Pending Payments" value={stats.pendingPayments} icon={CreditCard} color="bg-gradient-to-r from-[#fce51d] to-[#fec62c]" />
         <StatCard title="Active Plans" value={stats.activePlans} icon={ClipboardList} color="bg-green-500" />
         <StatCard title="Total Revenue" value={stats.totalRevenue} icon={CreditCard} color="bg-purple-500" />
       </div>
@@ -287,7 +287,7 @@ const AdminDashboard = () => {
                   <button
                     onClick={sendPaymentReminders}
                     disabled={notifying}
-                    className={`${getButtonStyles("bg-orange-600 hover:bg-orange-700")} ${
+                    className={`${getButtonStyles("bg-gradient-to-r from-[#fce51d] to-[#fec62c] hover:opacity-90")} ${
                       notifying ? "opacity-50 cursor-not-allowed" : ""
                     }`}
                   >
