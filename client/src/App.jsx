@@ -12,6 +12,7 @@ import Footer from './components/Footer'
 import PageTransition from './components/PageTransition'
 import ProtectedRoute from './components/ProtectedRoute'
 import { ThemeProvider } from './components/ThemeProvider'
+import CornerLogo from './components/CornerLogo'
 import { useEffect } from 'react'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
@@ -21,6 +22,7 @@ function AnimatedRoutes() {
   
   return (
     <AnimatePresence mode="wait">
+      <CornerLogo /> {/* Add the logo component here */}
       <Routes location={location}>
         <Route
           path="/"
