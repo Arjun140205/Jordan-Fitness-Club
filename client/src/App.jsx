@@ -21,55 +21,65 @@ function AnimatedRoutes() {
   const location = useLocation();
   
   return (
-    <AnimatePresence mode="wait">
-      <CornerLogo /> {/* Add the logo component here */}
-      <Routes location={location}>
+    <>
+      <CornerLogo />
+      <Routes>
         <Route
           path="/"
           element={
-            <PageTransition key="home">
-              <Home />
-            </PageTransition>
+            <AnimatePresence mode="wait">
+              <PageTransition key={location.pathname}>
+                <Home />
+              </PageTransition>
+            </AnimatePresence>
           }
         />
         <Route
           path="/dashboard"
           element={
-            <PageTransition key="user-dashboard">
-              <ProtectedRoute>
-                <UserDashboard />
-              </ProtectedRoute>
-            </PageTransition>
+            <AnimatePresence mode="wait">
+              <PageTransition key={location.pathname}>
+                <ProtectedRoute>
+                  <UserDashboard />
+                </ProtectedRoute>
+              </PageTransition>
+            </AnimatePresence>
           }
         />
         <Route
           path="/admin"
           element={
-            <PageTransition key="admin-dashboard">
-              <ProtectedRoute adminOnly={true}>
-                <AdminDashboard />
-              </ProtectedRoute>
-            </PageTransition>
+            <AnimatePresence mode="wait">
+              <PageTransition key={location.pathname}>
+                <ProtectedRoute adminOnly={true}>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              </PageTransition>
+            </AnimatePresence>
           }
         />
         <Route
           path="/login"
           element={
-            <PageTransition key="login">
-              <Login />
-            </PageTransition>
+            <AnimatePresence mode="wait">
+              <PageTransition key={location.pathname}>
+                <Login />
+              </PageTransition>
+            </AnimatePresence>
           }
         />
         <Route
           path="/register"
           element={
-            <PageTransition key="register">
-              <Register />
-            </PageTransition>
+            <AnimatePresence mode="wait">
+              <PageTransition key={location.pathname}>
+                <Register />
+              </PageTransition>
+            </AnimatePresence>
           }
         />
       </Routes>
-    </AnimatePresence>
+    </>
   );
 }
 
