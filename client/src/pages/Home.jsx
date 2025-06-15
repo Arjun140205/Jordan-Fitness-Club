@@ -18,17 +18,19 @@ import {
   RiStarHalfFill,
   RiFacebookFill,
   RiInstagramLine,
-} from "react-icons/ri";
+  RiTwitterFill
+} from 'react-icons/ri';
 
 import headerImage from "../assets/header.png";
 import class1Image from "../assets/class-1.jpg";
 import class2Image from "../assets/class-2.jpg";
 import joinImage from "../assets/join.jpg";
 import memberImage from "../assets/member.jpg";
+import logo from "../assets/logo.png";
 
 const Home = () => {
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div>
       <header className="section-container">
         <motion.div 
           initial={{ opacity: 0 }}
