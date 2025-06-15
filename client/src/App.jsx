@@ -9,22 +9,19 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
-import Logo from './components/Logo'
 import PageTransition from './components/PageTransition'
 import ProtectedRoute from './components/ProtectedRoute'
 import { ThemeProvider } from './components/ThemeProvider'
 import { useEffect } from 'react'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
-import './styles/logo.css'
 
 function AnimatedRoutes() {
   const location = useLocation();
-
+  
   return (
     <AnimatePresence mode="wait">
-      <Logo />
-      <Routes location={location} key={location.pathname}>
+      <Routes location={location}>
         <Route
           path="/"
           element={
