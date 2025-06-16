@@ -22,7 +22,7 @@ const Footer = () => {
   const contactInfo = [
     { icon: Phone, text: '+91 9596951004 ', href: 'tel:+919596951004' },
     { icon: Mail, text: 'jordanfitnessclub1@gmail.com', href: 'mailto:jordanfitnessclub1@gmail.com' },
-    { icon: MapPin, text: 'Sarwan Singh market power house road, near jamia masjid, main bazar, Poonch, J and K 185101', href: 'https://maps.google.com' },
+    { icon: MapPin, text: 'Sec 38 D, SCO - 15', href: 'https://maps.google.com' },
   ];
 
   const footerLinks = [
