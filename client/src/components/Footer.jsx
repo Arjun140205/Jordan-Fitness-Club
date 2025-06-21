@@ -26,11 +26,14 @@ const Footer = () => {
   ];
 
   const footerLinks = [
+    { text: 'Programs', href: '/programs' },
+    { text: 'Services', href: '/services' },
+    { text: 'Community', href: '/community' },
     { text: 'About Us', href: '/about' },
-    { text: 'Privacy Policy', href: '/privacy' },
-    { text: 'Terms of Service', href: '/terms' },
     { text: 'Contact', href: '/contact' },
     { text: 'Careers', href: '/careers' },
+    { text: 'Privacy Policy', href: '/privacy' },
+    { text: 'Terms of Service', href: '/terms' },
   ];
 
   return (
