@@ -51,15 +51,15 @@ const Home = () => {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className="text-6xl font-bold text-white mb-6"
+              className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6"
             >
-              <span className="text-stroke">MAKE</span> YOUR BODY SHAPE
+              <span className="text-stroke text-gray-900 dark:text-white">MAKE</span> YOUR BODY SHAPE
             </motion.h1>
             <motion.p
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.4 }}
-              className="text-[var(--text-light)] mb-8 max-w-xl"
+              className="text-gray-600 dark:text-[var(--text-light)] mb-8 max-w-xl"
             >
               Unleash your potential and embark on a journey towards a stronger,
               fitter, and more confident you. Sign up for 'Make Your Body Shape' now
@@ -88,10 +88,8 @@ const Home = () => {
 
       <section className="section-container">
         <div className="explore-header">
-          <h2 className="section-header">EXPLORE OUR PROGRAM</h2>
+          <h2 className="section-header text-gray-900 dark:text-white">EXPLORE OUR PROGRAM</h2>
           <div className="explore-nav">
-            <span><RiArrowLeftLine /></span>
-            <span><RiArrowRightLine /></span>
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-16">
@@ -101,14 +99,14 @@ const Home = () => {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.2 * index }}
-              className="card-hover bg-[var(--primary-color-light)] p-6 rounded-xl"
+              className="card-hover bg-white dark:bg-[var(--primary-color-light)] p-6 rounded-xl shadow-lg"
             >
               <span className="inline-block p-3 bg-[var(--secondary-color-dark)] rounded-lg text-white text-3xl mb-4">
                 {program.icon}
               </span>
-              <h4 className="text-xl font-semibold text-white mb-2">{program.title}</h4>
-              <p className="text-[var(--text-light)] mb-4">{program.description}</p>
-              <Link to="/register" className="text-white hover:text-[var(--secondary-color)] flex items-center gap-2">
+              <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{program.title}</h4>
+              <p className="text-gray-600 dark:text-[var(--text-light)] mb-4">{program.description}</p>
+              <Link to="/register" className="text-gray-900 dark:text-white hover:text-[var(--secondary-color)] flex items-center gap-2">
                 Join Now <RiArrowRightLine />
               </Link>
             </motion.div>
@@ -123,8 +121,8 @@ const Home = () => {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          <h2 className="text-4xl font-bold text-white mb-4">WHY JORDAN FITNESS CLUB?</h2>
-          <p className="text-[var(--text-light)] max-w-2xl mx-auto">
+          <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">WHY JORDAN FITNESS CLUB?</h2>
+          <p className="text-gray-600 dark:text-[var(--text-light)] max-w-2xl mx-auto">
             We offer more than just a workout - we provide an experience that transforms lives through fitness, community, and expert guidance.
           </p>
         </motion.div>
@@ -134,12 +132,12 @@ const Home = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="bg-[var(--primary-color-light)] rounded-xl overflow-hidden"
+            className="bg-white dark:bg-[var(--primary-color-light)] rounded-xl overflow-hidden shadow-lg"
           >
             <img src={class1Image} alt="Equipment" className="w-full h-48 object-cover" />
             <div className="p-6">
-              <h3 className="text-xl font-bold text-white mb-2">Modern Equipment</h3>
-              <p className="text-[var(--text-light)]">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Modern Equipment</h3>
+              <p className="text-gray-600 dark:text-[var(--text-light)]">
                 State-of-the-art facilities with the latest fitness technology and equipment.
               </p>
             </div>
@@ -150,12 +148,12 @@ const Home = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="bg-[var(--primary-color-light)] rounded-xl overflow-hidden"
+            className="bg-white dark:bg-[var(--primary-color-light)] rounded-xl overflow-hidden shadow-lg"
           >
             <img src={class2Image} alt="Training" className="w-full h-48 object-cover" />
             <div className="p-6">
-              <h3 className="text-xl font-bold text-white mb-2">Expert Trainers</h3>
-              <p className="text-[var(--text-light)]">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Expert Trainers</h3>
+              <p className="text-gray-600 dark:text-[var(--text-light)]">
                 Certified professionals dedicated to helping you achieve your fitness goals.
               </p>
             </div>
@@ -166,12 +164,12 @@ const Home = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.4 }}
-            className="bg-[var(--primary-color-light)] rounded-xl overflow-hidden"
+            className="bg-white dark:bg-[var(--primary-color-light)] rounded-xl overflow-hidden shadow-lg"
           >
             <img src={memberImage} alt="Community" className="w-full h-48 object-cover" />
             <div className="p-6">
-              <h3 className="text-xl font-bold text-white mb-2">Strong Community</h3>
-              <p className="text-[var(--text-light)]">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Strong Community</h3>
+              <p className="text-gray-600 dark:text-[var(--text-light)]">
                 Join a supportive community that motivates and inspires you to be your best.
               </p>
             </div>
