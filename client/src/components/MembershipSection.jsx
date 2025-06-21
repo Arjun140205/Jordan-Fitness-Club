@@ -103,7 +103,7 @@ const membershipPlans = [
     features: [
       "Everything in Premium Plan",
       "Unlimited fitness classes",
-      "Personal training sessions (2x/month)",
+      "Personal training sessions(2x/month)",
       "Recovery zone access",
       "Guest passes (2/month)"
     ]
