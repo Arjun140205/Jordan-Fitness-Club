@@ -1,6 +1,12 @@
 import { motion } from 'framer-motion';
 
-const StatCard = ({ title, value, icon: Icon, color }) => {
+const StatCard = ({ title, value, icon, color }) => {
+  // Helper function to get text color from background color
+  const getTextColor = (bgColor) => {
+    if (!bgColor) return 'text-blue-500';
+    return bgColor.replace('bg-', 'text-');
+  };
+
   return (
     <motion.div
       whileHover={{ y: -5 }}
@@ -11,11 +17,15 @@ const StatCard = ({ title, value, icon: Icon, color }) => {
                     ${color} opacity-10`} />
       <div className="flex items-center gap-4">
         <div className={`p-3 ${color} bg-opacity-20 rounded-xl`}>
-          <Icon className={`w-6 h-6 ${color.replace('bg-', 'text-')}`} />
+          {typeof icon === 'string' ? (
+            <span className="text-2xl">{icon}</span>
+          ) : (
+            icon && <icon.type {...icon.props} className={`w-6 h-6 ${getTextColor(color)}`} />
+          )}
         </div>
         <div>
-          <p className="text-sm text-gray-600">{title}</p>
-          <h4 className="text-2xl font-bold">{value}</h4>
+          <p className="text-sm text-gray-600 dark:text-gray-300">{title}</p>
+          <h4 className="text-2xl font-bold text-gray-800 dark:text-white">{value}</h4>
         </div>
       </div>
     </motion.div>
