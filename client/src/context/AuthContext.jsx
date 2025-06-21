@@ -18,23 +18,6 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const validateToken = async (token) => {
-    try {
-      const response = await axios.get(endpoints.auth.validate, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      
-      const userData = response.data;
-      setUser(userData);
-      setIsAuthenticated(true);
-    } catch (error) {
-      console.error('Token validation error:', error);
-      handleLogout();
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
     const initialize = async () => {
       const token = localStorage.getItem('token');
@@ -64,6 +47,21 @@ export const AuthProvider = ({ children }) => {
       return payload.exp * 1000; // Convert to milliseconds
     } catch (error) {
       return null;
+    }
+  };
+
+  const validateToken = async (token) => {
+    try {
+      const response = await axios.get(`${endpoints.auth.validate}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      setUser(response.data.user);
+      setIsAuthenticated(true);
+    } catch (error) {
+      handleLogout();
+    } finally {
+      setLoading(false);
     }
   };
 
