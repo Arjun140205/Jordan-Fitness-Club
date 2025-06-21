@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 
-export const authMiddleware = async (req, res, next) => {
+const authMiddleware = async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -19,9 +19,11 @@ export const authMiddleware = async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    return res.status(401).json({ message: "Invalid token", error: error.message });
+    return res.status(401).json({ message: "Invalid token" });
   }
 };
+
+export default authMiddleware;
 
 export const adminMiddleware = (req, res, next) => {
   if (req.user.role !== "admin") {
