@@ -1,118 +1,181 @@
 import { motion } from "framer-motion";
+import { RiShieldCheckFill, RiTimeFill, RiMoneyDollarCircleFill, RiUserSettingsFill } from 'react-icons/ri';
 
 const Terms = () => {
   return (
-    <div className="pt-24 pb-12">
-      <div className="max-w-[var(--max-width)] mx-auto px-4">
-        <motion.h1 
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          className="text-4xl font-bold mb-8"
-        >
-          Terms of Service
-        </motion.h1>
-
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="min-h-screen py-20 px-4"
+    >
+      <div className="max-w-[var(--max-width)] mx-auto">
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="prose max-w-none"
+          className="prose dark:prose-invert max-w-none"
         >
-          <section className="mb-8">
-            <h2 className="text-2xl font-bold mb-4">1. Membership Terms</h2>
-            <div className="space-y-4">
+          <div className="text-center mb-16">
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">
+              Terms of Service
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+              Last updated: June 21, 2025
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+            {keyPoints.map((point, index) => (
+              <motion.div
+                key={point.title}
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: index * 0.1 }}
+                className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg"
+              >
+                <span className="text-[var(--secondary-color)] text-3xl mb-4 inline-block">
+                  {point.icon}
+                </span>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
+                  {point.title}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400">
+                  {point.description}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+
+          <section className="mb-12">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">1. Membership Terms</h2>
+            <div className="space-y-4 text-gray-600 dark:text-gray-400">
+              <p>By becoming a member of Jordan Fitness Club, you agree to:</p>
+              <ul className="list-disc list-inside space-y-2">
+                <li>Follow all gym rules and regulations</li>
+                <li>Respect other members and staff</li>
+                <li>Use equipment properly and safely</li>
+                <li>Maintain current payment information</li>
+                <li>Provide accurate personal information</li>
+                <li>Comply with health and safety protocols</li>
+                <li>Not share membership credentials</li>
+              </ul>
+            </div>
+          </section>
+
+          <section className="mb-12">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">2. Payment and Cancellation</h2>
+            <div className="space-y-4 text-gray-600 dark:text-gray-400">
+              <p>Members understand and agree that:</p>
+              <ul className="list-disc list-inside space-y-2">
+                <li>Monthly membership fees are due on the specified billing date</li>
+                <li>A 30-day notice is required for membership cancellation</li>
+                <li>No refunds will be issued for unused membership time</li>
+                <li>Late payment fees may apply for overdue payments</li>
+                <li>Membership fees may be subject to annual increases</li>
+                <li>Initial membership term is minimum 3 months</li>
+                <li>Early termination fees may apply</li>
+              </ul>
+            </div>
+          </section>
+
+          <section className="mb-12">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">3. Liability and Waiver</h2>
+            <div className="space-y-4 text-gray-600 dark:text-gray-400">
               <p>
-                By becoming a member of Jordan Fitness Club, you agree to these terms and conditions. Membership is subject to the following conditions:
+                Members acknowledge that exercise and use of fitness equipment carry inherent risks. 
+                Jordan Fitness Club is not liable for any injury or damage that may occur during 
+                the use of our facilities or participation in our programs, except where caused by 
+                our gross negligence.
               </p>
-              <ul className="list-disc pl-6">
-                <li>Members must be at least 16 years of age</li>
-                <li>Membership is non-transferable</li>
-                <li>Members must complete health screening documentation</li>
-                <li>Members must follow gym rules and etiquette</li>
-                <li>Management reserves the right to terminate membership for violation of terms</li>
-              </ul>
-            </div>
-          </section>
-
-          <section className="mb-8">
-            <h2 className="text-2xl font-bold mb-4">2. Payment and Cancellation</h2>
-            <div className="space-y-4">
-              <p>Payment terms and cancellation policies include:</p>
-              <ul className="list-disc pl-6">
-                <li>Monthly membership fees are due on the agreed payment date</li>
-                <li>30-day written notice required for membership cancellation</li>
-                <li>Initiation fees are non-refundable</li>
-                <li>Membership freezing available for medical reasons (documentation required)</li>
-                <li>Late payment fees may apply</li>
-              </ul>
-            </div>
-          </section>
-
-          <section className="mb-8">
-            <h2 className="text-2xl font-bold mb-4">3. Facility Usage</h2>
-            <div className="space-y-4">
-              <p>Members agree to the following regarding facility usage:</p>
-              <ul className="list-disc pl-6">
-                <li>Proper athletic attire and closed-toe shoes required</li>
-                <li>Equipment must be wiped down after use</li>
-                <li>Respect time limits on cardio equipment during peak hours</li>
-                <li>Personal training limited to club-employed trainers</li>
-                <li>Lockers are for day use only unless otherwise specified</li>
-              </ul>
-            </div>
-          </section>
-
-          <section className="mb-8">
-            <h2 className="text-2xl font-bold mb-4">4. Liability and Risk</h2>
-            <div className="space-y-4">
               <p>
-                Members acknowledge that exercise and use of fitness facilities carries inherent risks. Members agree to:
+                Members are required to:
               </p>
-              <ul className="list-disc pl-6">
-                <li>Accept responsibility for their own safety</li>
-                <li>Report any equipment issues to staff immediately</li>
-                <li>Not hold the club liable for personal injury or property loss</li>
-                <li>Follow proper form and technique guidelines</li>
-                <li>Seek medical clearance when necessary</li>
+              <ul className="list-disc list-inside space-y-2">
+                <li>Consult with healthcare providers before starting any exercise program</li>
+                <li>Report any equipment malfunctions immediately</li>
+                <li>Use equipment as instructed</li>
+                <li>Report any injuries to staff immediately</li>
               </ul>
             </div>
           </section>
 
-          <section className="mb-8">
-            <h2 className="text-2xl font-bold mb-4">5. Club Rules and Etiquette</h2>
-            <div className="space-y-4">
-              <ul className="list-disc pl-6">
-                <li>No unauthorized photography or videography</li>
-                <li>Respect other members' personal space and privacy</li>
-                <li>Follow posted schedules and class registration procedures</li>
-                <li>Maintain appropriate noise levels</li>
-                <li>Return equipment to designated areas</li>
+          <section className="mb-12">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">4. Facility Rules</h2>
+            <div className="space-y-4 text-gray-600 dark:text-gray-400">
+              <p>Members must:</p>
+              <ul className="list-disc list-inside space-y-2">
+                <li>Wear appropriate athletic attire and footwear</li>
+                <li>Wipe down equipment after use</li>
+                <li>Return weights and equipment to designated areas</li>
+                <li>Respect facility hours of operation</li>
+                <li>Follow any posted safety guidelines</li>
+                <li>Maintain personal hygiene</li>
+                <li>Use lockers only during workout sessions</li>
               </ul>
             </div>
           </section>
 
-          <section className="mb-8">
-            <h2 className="text-2xl font-bold mb-4">6. Modifications to Terms</h2>
-            <p>
-              Jordan Fitness Club reserves the right to modify these terms at any time. Members will be notified of significant changes via email or posted notices within the facility.
+          <section className="mb-12">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">5. Electronic Communications</h2>
+            <div className="space-y-4 text-gray-600 dark:text-gray-400">
+              <p>
+                By using our services, you consent to receive communications from us electronically, 
+                including emails, texts, and push notifications. You can opt out of marketing 
+                communications while continuing to receive essential service updates.
+              </p>
+            </div>
+          </section>
+
+          <section className="mb-12">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">6. Modifications</h2>
+            <div className="space-y-4 text-gray-600 dark:text-gray-400">
+              <p>
+                Jordan Fitness Club reserves the right to modify these terms at any time. 
+                Members will be notified of any changes through email or posted notices 
+                within the facility. Continued use of our services after such modifications 
+                constitutes acceptance of the updated terms.
+              </p>
+            </div>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Contact</h2>
+            <p className="text-gray-600 dark:text-gray-400">
+              For questions about these terms, please contact us at{" "}
+              <a
+                href="mailto:terms@jordanfitnessclub.com"
+                className="text-[var(--secondary-color)]"
+              >
+                terms@jordanfitnessclub.com
+              </a>
             </p>
           </section>
-
-          <section className="mb-8">
-            <h2 className="text-2xl font-bold mb-4">7. Contact Information</h2>
-            <div className="bg-gray-100 p-4 rounded">
-              <p>For questions about these terms, please contact:</p>
-              <p>Email: terms@jordanfitnessclub.com</p>
-              <p>Phone: (555) 123-4567</p>
-              <p>Address: 123 Fitness Avenue, City, State 12345</p>
-            </div>
-          </section>
-
-          <p className="text-sm text-gray-600">Last Updated: June 14, 2025</p>
         </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 };
+
+const keyPoints = [
+  {
+    title: "Member Safety",
+    description: "Your safety is our priority. We maintain strict safety protocols and equipment maintenance standards.",
+    icon: <RiShieldCheckFill />
+  },
+  {
+    title: "Flexible Access",
+    description: "24/7 access to facilities with your membership, subject to terms and conditions.",
+    icon: <RiTimeFill />
+  },
+  {
+    title: "Fair Billing",
+    description: "Transparent pricing with no hidden fees. Clear cancellation and refund policies.",
+    icon: <RiMoneyDollarCircleFill />
+  },
+  {
+    title: "Member Rights",
+    description: "Clear outline of member rights, responsibilities, and dispute resolution procedures.",
+    icon: <RiUserSettingsFill />
+  }
+];
 
 export default Terms;
