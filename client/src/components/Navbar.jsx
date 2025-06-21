@@ -1,14 +1,17 @@
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
+import { useEffect, useState } from "react";
 
 const Navbar = () => {
-  const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
+  const { isAuthenticated, user, logout } = useAuth();
 
   const handleLogout = () => {
-    logout();
-    navigate("/login");
+    if (logout) {
+      logout();
+      navigate("/login");
+    }
   };
 
   return (
