@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import dotenv from "dotenv";
+import authMiddleware from "../middleware/authMiddleware.js";
 
 dotenv.config();
 
@@ -87,6 +88,26 @@ router.post("/login", async (req, res) => {
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
+// Validate token and return user info
+router.get("/validate", authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('-password');
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.json({
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      phone: user.phone
+    });
+  } catch (err) {
+    console.error("Validation error:", err);
+    res.status(500).json({ message: "Server error during validation" });
   }
 });
 
