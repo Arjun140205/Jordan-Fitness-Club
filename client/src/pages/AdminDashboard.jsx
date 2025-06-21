@@ -3,8 +3,6 @@ import { Tab, Dialog, Transition } from "@headlessui/react";
 import { motion } from "framer-motion";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
 import {
   Users,
   CreditCard,
@@ -16,8 +14,7 @@ import {
   Trash2,
   Edit,
   Search,
-  Download,
-  DownloadCloud
+  Download
 } from "lucide-react";
 import StatCard from "../components/StatCard";
 import DataTable from "../components/DataTable";
@@ -27,8 +24,6 @@ import NotificationLogs from "../components/NotificationLogs";
 import PageTransition from "../components/PageTransition";
 
 const AdminDashboard = () => {
-  const navigate = useNavigate();
-  const { user, isAuthenticated } = useAuth();
   const [selectedTab, setSelectedTab] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -187,23 +182,8 @@ const AdminDashboard = () => {
   };
 
   useEffect(() => {
-    const checkAdminAccess = async () => {
-      try {
-        // If not authenticated or not an admin, redirect to login
-        if (!isAuthenticated || user?.role !== 'admin') {
-          toast.error('Unauthorized access. Please login as admin.');
-          navigate('/login');
-          return;
-        }
-        await fetchDashboardData();
-      } catch (err) {
-        console.error("Access check error:", err);
-        setError(err.message);
-      }
-    };
-
-    checkAdminAccess();
-  }, [isAuthenticated, user, navigate]);
+    fetchDashboardData();
+  }, []);
 
   const { stats, users } = dashboardData;
 
@@ -366,7 +346,7 @@ const AdminDashboard = () => {
             </motion.h1>
 
             <Tab.Group>
-              <Tab.List className="flex overflow-x-auto space-x-2 rounded-xl bg-blue-900/20 p-1 mb-8 no-scrollbar">
+              <Tab.List className="flex space-x-2 rounded-xl bg-blue-900/20 p-1 mb-8">
                 {[
                   { name: "Users", icon: Users, fullName: "Manage Users" },
                   { name: "Payments", icon: CreditCard, fullName: "View Payments" },
@@ -375,93 +355,81 @@ const AdminDashboard = () => {
                   { name: "Logs", icon: ClipboardList, fullName: "Notification Logs" },
                 ].map((tab, idx) => (
                   <Tab key={idx} className={({ selected }) => 
-                    `flex-none sm:flex-1 min-w-[100px] rounded-lg py-2 md:py-3 px-3 md:px-4 text-sm font-medium leading-5 
-                     text-gray-700 flex items-center justify-center gap-2 whitespace-nowrap transition-all
-                     ${selected ? "bg-white shadow scale-105" : "text-gray-600 hover:bg-white/[0.12] hover:text-gray-800"}`
+                    `flex-1 min-w-[120px] rounded-lg py-2 md:py-3 px-2 md:px-4 text-sm font-medium leading-5 
+                     text-gray-700 flex items-center justify-center gap-2 whitespace-nowrap
+                     ${selected ? "bg-white shadow" : "text-gray-600 hover:bg-white/[0.12] hover:text-gray-800"}`
                   }>
-                    {tab.icon && <tab.icon className="w-4 h-4 flex-shrink-0" />}
-                    <span className="hidden sm:inline">{tab.fullName}</span>
-                    <span className="sm:hidden">{tab.name}</span>
+                    {tab.icon && <tab.icon className="w-4 h-4" />}
+                    <span className="hidden md:inline">{tab.fullName}</span>
+                    <span className="md:hidden">{tab.name}</span>
                   </Tab>
                 ))}
               </Tab.List>
               <Tab.Panels>
                 {/* Users Tab */}
                 <Tab.Panel>
-                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mb-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6">
                     <StatCard
                       title="Total Users"
                       value={stats.totalUsers}
-                      icon={<Users className="w-5 h-5 sm:w-6 sm:h-6" />}
+                      icon={<Users className="w-6 h-6" />}
                       color="bg-blue-500"
-                      className="p-3 sm:p-4"
                     />
                     <StatCard
                       title="Pending Payments"
                       value={stats.pendingPayments}
-                      icon={<CreditCard className="w-5 h-5 sm:w-6 sm:h-6" />}
+                      icon={<CreditCard className="w-6 h-6" />}
                       color="bg-orange-500"
-                      className="p-3 sm:p-4"
                     />
                     <StatCard
                       title="Active Plans"
                       value={stats.activePlans}
-                      icon={<ClipboardList className="w-5 h-5 sm:w-6 sm:h-6" />}
+                      icon={<ClipboardList className="w-6 h-6" />}
                       color="bg-green-500"
-                      className="p-3 sm:p-4"
                     />
                     <StatCard
                       title="Total Revenue"
                       value={stats.totalRevenue || "$0"}
-                      icon={<CreditCard className="w-5 h-5 sm:w-6 sm:h-6" />}
+                      icon={<CreditCard className="w-6 h-6" />}
                       color="bg-purple-500"
-                      className="p-3 sm:p-4"
                     />
                   </div>
 
                   {/* User Management Section */}
-                  <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 sm:p-6 mb-8">
+                  <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-8">
                     <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">
                       User Management
                     </h2>
-                    <div className="flex flex-col sm:flex-row gap-3">
+                    <div className="space-y-4">
                       <button
                         onClick={() => setIsNotifyModalOpen(true)}
-                        className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 
-                                 dark:bg-blue-500 dark:hover:bg-blue-600 transition-all hover:scale-[1.02] 
-                                 active:scale-[0.98] flex items-center justify-center gap-2"
+                        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition-colors mr-4"
                       >
-                        <MessageSquare className="w-5 h-5" />
-                        <span className="text-sm sm:text-base">Send Notification</span>
+                        Send Notification to All Users
                       </button>
                       <button
-                        className={getButtonStyles("bg-orange-600 hover:bg-orange-700") + " flex-1"}
+                        className={getButtonStyles("bg-orange-600 hover:bg-orange-700")}
                         onClick={() => setIsModalOpen(true)}
                       >
                         <MessageSquare className="w-5 h-5" />
-                        <span className="text-sm sm:text-base">Payment Reminder</span>
+                        <span className="hidden sm:inline">Send Payment Reminder</span>
+                        <span className="sm:hidden">Payment Reminder</span>
                       </button>
                     </div>
                   </div>
 
                   {/* User Table */}
-                  <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-3 sm:p-4 md:p-6 shadow-lg border border-white/50">
+                  <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-4 md:p-6 shadow-lg border border-white/50">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-                      <h3 className="text-lg sm:text-xl font-semibold">User Management</h3>
-                      <button className={getButtonStyles("bg-blue-600 hover:bg-blue-700") + " w-full sm:w-auto"}>
-                        <UserPlus className="w-4 h-4 sm:w-5 sm:h-5" />
-                        <span>Add New User</span>
+                      <h3 className="text-xl font-semibold">User Management</h3>
+                      <button className={getButtonStyles("bg-blue-600 hover:bg-blue-700")}>
+                        <UserPlus className="w-5 h-5" />
+                        <span className="hidden sm:inline">Add New User</span>
+                        <span className="sm:hidden">Add User</span>
                       </button>
                     </div>
-                    <div className="overflow-x-auto -mx-3 sm:mx-0">
-                      <div className="min-w-full inline-block sm:rounded-lg p-3 sm:p-0">
-                        <DataTable 
-                          data={users} 
-                          columns={columns} 
-                          searchField="name"
-                          className="w-full"
-                        />
-                      </div>
+                    <div className="overflow-x-auto">
+                      <DataTable data={users} columns={columns} searchField="name" />
                     </div>
                   </div>
                 </Tab.Panel>
@@ -620,8 +588,8 @@ const AdminDashboard = () => {
                   <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-8">
                     <div className="flex justify-between items-center mb-6">
                       <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Notification History</h2>
-                      <button className={getButtonStyles("bg-blue-600 hover:bg-blue-700") + " min-w-[140px]"}>
-                        <DownloadCloud className="w-4 h-4" />
+                      <button className={getButtonStyles("bg-blue-600 hover:bg-blue-700")}>
+                        <Download className="w-5 h-5" />
                         Export Logs
                       </button>
                     </div>
