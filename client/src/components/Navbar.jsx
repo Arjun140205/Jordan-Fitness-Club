@@ -23,7 +23,7 @@ const Navbar = () => {
             <li>
               <Link 
                 to="/" 
-                className="px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-white/90 rounded-full hover:shadow-[0_0_15px_rgba(255,255,255,0.5)] hover:scale-105 hover:bg-white/20 transition-all duration-300 ease-out"
+                className="px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-gray-800 dark:text-white/90 rounded-full hover:shadow-[0_0_15px_rgba(0,0,0,0.2)] dark:hover:shadow-[0_0_15px_rgba(255,255,255,0.5)] hover:scale-105 hover:bg-gray-100 dark:hover:bg-white/20 transition-all duration-300 ease-out"
               >
                 Home
               </Link>
@@ -32,7 +32,7 @@ const Navbar = () => {
               <li>
                 <Link 
                   to={user?.role === 'admin' ? '/admin' : '/dashboard'}
-                  className="px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-white/90 rounded-full hover:shadow-[0_0_15px_rgba(255,255,255,0.5)] hover:scale-105 hover:bg-white/20 transition-all duration-300 ease-out"
+                  className="px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-gray-800 dark:text-white/90 rounded-full hover:shadow-[0_0_15px_rgba(0,0,0,0.2)] dark:hover:shadow-[0_0_15px_rgba(255,255,255,0.5)] hover:scale-105 hover:bg-gray-100 dark:hover:bg-white/20 transition-all duration-300 ease-out"
                 >
                   Dashboard
                 </Link>
@@ -43,7 +43,7 @@ const Navbar = () => {
                 <li>
                   <Link 
                     to="/login" 
-                    className="px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-white/90 rounded-full hover:shadow-[0_0_15px_rgba(255,255,255,0.5)] hover:scale-105 hover:bg-white/20 transition-all duration-300 ease-out"
+                    className="px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-gray-800 dark:text-white/90 rounded-full hover:shadow-[0_0_15px_rgba(0,0,0,0.2)] dark:hover:shadow-[0_0_15px_rgba(255,255,255,0.5)] hover:scale-105 hover:bg-gray-100 dark:hover:bg-white/20 transition-all duration-300 ease-out"
                   >
                     Login
                   </Link>
