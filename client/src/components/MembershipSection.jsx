@@ -52,20 +52,6 @@ const MembershipSection = () => {
           ))}
         </div>
 
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          viewport={{ once: true }}
-          className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8 text-center"
-        >
-          {benefits.map((benefit, index) => (
-            <div key={index} className="p-6">
-              <div className="text-4xl text-[var(--secondary-color)] mb-4">{benefit.icon}</div>
-              <h3 className="text-xl font-bold mb-2">{benefit.title}</h3>
-              <p className="text-gray-400">{benefit.description}</p>
-            </div>
-          ))}
-        </motion.div>
       </div>
     </section>
   );
@@ -107,24 +93,6 @@ const membershipPlans = [
       "Recovery zone access",
       "Guest passes (2/month)"
     ]
-  }
-];
-
-const benefits = [
-  {
-    title: "STATE OF THE ART EQUIPMENT",
-    description: "Access premium fitness equipment from world-renowned brands",
-    icon: "🏋️‍♂️"
-  },
-  {
-    title: "EXPERT TRAINERS",
-    description: "Work with certified professionals who are passionate about your success",
-    icon: "👨‍🏫"
-  },
-  {
-    title: "FLEXIBLE MEMBERSHIPS",
-    description: "Choose plans that adapt to your schedule and fitness goals",
-    icon: "🎯"
   }
 ];
 
