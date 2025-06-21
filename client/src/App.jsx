@@ -7,6 +7,14 @@ import UserDashboard from './pages/UserDashboard'
 import AdminDashboard from './pages/AdminDashboard'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import About from './pages/About'
+import Privacy from './pages/Privacy'
+import Terms from './pages/Terms'
+import Contact from './pages/Contact'
+import Careers from './pages/Careers'
+import Community from './pages/Community'
+import Programs from './pages/Programs'
+import Services from './pages/Services'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import PageTransition from './components/PageTransition'
@@ -74,6 +82,87 @@ function AnimatedRoutes() {
             <AnimatePresence mode="wait">
               <PageTransition key={location.pathname}>
                 <Register />
+              </PageTransition>
+            </AnimatePresence>
+          }
+        />
+        {/* Quick Links Routes */}
+        <Route
+          path="/about"
+          element={
+            <AnimatePresence mode="wait">
+              <PageTransition key={location.pathname}>
+                <About />
+              </PageTransition>
+            </AnimatePresence>
+          }
+        />
+        <Route
+          path="/privacy"
+          element={
+            <AnimatePresence mode="wait">
+              <PageTransition key={location.pathname}>
+                <Privacy />
+              </PageTransition>
+            </AnimatePresence>
+          }
+        />
+        <Route
+          path="/terms"
+          element={
+            <AnimatePresence mode="wait">
+              <PageTransition key={location.pathname}>
+                <Terms />
+              </PageTransition>
+            </AnimatePresence>
+          }
+        />
+        <Route
+          path="/contact"
+          element={
+            <AnimatePresence mode="wait">
+              <PageTransition key={location.pathname}>
+                <Contact />
+              </PageTransition>
+            </AnimatePresence>
+          }
+        />
+        <Route
+          path="/careers"
+          element={
+            <AnimatePresence mode="wait">
+              <PageTransition key={location.pathname}>
+                <Careers />
+              </PageTransition>
+            </AnimatePresence>
+          }
+        />
+        <Route
+          path="/community"
+          element={
+            <AnimatePresence mode="wait">
+              <PageTransition key={location.pathname}>
+                <Community />
+              </PageTransition>
+            </AnimatePresence>
+          }
+        />
+        <Route
+          path="/programs"
+          element={
+            <AnimatePresence mode="wait">
+              <PageTransition key={location.pathname}>
+                <Programs />
+              </PageTransition>
+            </AnimatePresence>
+          }
+        />
+        <Route
+          path="/services"
+          element={
+            <AnimatePresence mode="wait">
+              <PageTransition key={location.pathname}>
+                <Services />
               </PageTransition>
             </AnimatePresence>
           }
