@@ -91,23 +91,17 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// Validate token and return user info
+// Validate token endpoint
 router.get("/validate", authMiddleware, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('-password');
+    const user = await User.findById(req.user.id).select("-password");
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    res.json({
-      id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      phone: user.phone
-    });
+    res.json(user);
   } catch (err) {
-    console.error("Validation error:", err);
-    res.status(500).json({ message: "Server error during validation" });
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
