@@ -6,7 +6,20 @@ import userRoutes from "./routes/userRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 
+// Load environment variables early
 dotenv.config();
+
+// Verify essential environment variables
+if (!process.env.MONGO_URI) {
+  console.error('ERROR: MONGO_URI is not defined in environment variables');
+  process.exit(1);
+}
+
+if (!process.env.JWT_SECRET) {
+  console.error('ERROR: JWT_SECRET is not defined in environment variables');
+  process.exit(1);
+}
+
 const app = express();
 
 // Middlewares
@@ -18,35 +31,51 @@ app.use(cors({
     if (origin.startsWith('http://localhost:')) return callback(null, true);
     callback(new Error('Not allowed by CORS'));
   },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  credentials: true
 }));
-app.use(express.json());
 
-// Debug middleware
-app.use((req, res, next) => {
-  console.log(`${req.method} ${req.url}`, {
-    headers: req.headers,
-    body: req.body
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// API Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/user', userRoutes);
+app.use('/api/admin', adminRoutes);
+
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'ok',
+    mongodb: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
   });
-  next();
 });
 
-// Routes
-app.use("/api/auth", authRoutes);
-app.use("/api/user", userRoutes);
-app.use("/api/admin", adminRoutes);
-
-// MongoDB + Server Init
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => {
-  console.log("MongoDB connected");
-  app.listen(process.env.PORT, () => {
-    console.log(`Server running on http://localhost:${process.env.PORT}`);
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ 
+    error: 'Something went wrong!',
+    message: err.message 
   });
-})
-.catch(err => console.error("MongoDB connection error:", err));
+});
+
+// Default port is 5001 (macOS AirPlay uses 5000)
+const PORT = process.env.PORT || 5001;
+
+// Connect to MongoDB and start server
+console.log('Attempting to connect to MongoDB...');
+mongoose
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log('✅ Connected to MongoDB');
+    app.listen(PORT, () => {
+      console.log(`✅ Server running on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error('❌ MongoDB connection error:', err);
+    process.exit(1);
+  });
