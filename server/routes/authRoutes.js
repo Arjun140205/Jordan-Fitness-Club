@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import dotenv from "dotenv";
 import authMiddleware from "../middleware/authMiddleware.js";
+import { forgotPassword, resetPassword } from "../controllers/authController.js";
 
 dotenv.config();
 
@@ -104,5 +105,9 @@ router.get("/validate", authMiddleware, async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
+// Forgot password
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password", resetPassword);
 
 export default router;
