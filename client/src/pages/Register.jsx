@@ -15,6 +15,9 @@ const schema = yup.object({
   email: yup.string()
     .email("Invalid email format")
     .required("Email is required"),
+  phone: yup.string()
+    .required("Phone number is required")
+    .matches(/^\+91[0-9]{10}$/, "Phone number must be in +911234567890 format"),
   password: yup.string()
     .required("Password is required")
     .min(6, "Password must be at least 6 characters"),
@@ -32,7 +35,11 @@ const Register = () => {
 
   const onSubmit = async (data) => {
     try {
-      await axios.post("http://localhost:5001/api/auth/register", data);
+      let phone = data.phone;
+      if (!phone.startsWith('+91')) {
+        phone = '+91' + phone;
+      }
+      await axios.post("http://localhost:5001/api/auth/register", { ...data, phone });
       toast.success("Registration successful!");
       setTimeout(() => {
         navigate("/login");
@@ -64,39 +71,33 @@ const Register = () => {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Full Name
-              </label>
-              <input
-                type="text"
-                {...register("name")}
-                className="w-full px-4 py-3 bg-white/50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-lg
-                         text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 
-                         focus:ring-[var(--secondary-color)]/50 transition-all duration-200"
-                placeholder="John Doe"
-              />
-              {errors.name && (
-                <p className="mt-1 text-sm text-red-500">{errors.name.message}</p>
-              )}
-            </div>
+            <FormInput
+              label="Full Name"
+              type="text"
+              name="name"
+              register={register}
+              error={errors.name}
+              placeholder="John Doe"
+            />
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Email
-              </label>
-              <input
-                type="email"
-                {...register("email")}
-                className="w-full px-4 py-3 bg-white/50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-lg
-                         text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 
-                         focus:ring-[var(--secondary-color)]/50 transition-all duration-200"
-                placeholder="your@email.com"
-              />
-              {errors.email && (
-                <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
-              )}
-            </div>
+            <FormInput
+              label="Email"
+              type="email"
+              name="email"
+              register={register}
+              error={errors.email}
+              placeholder="your@email.com"
+            />
+
+            <FormInput
+              label="Phone Number"
+              type="text"
+              name="phone"
+              register={register}
+              error={errors.phone}
+              placeholder="1234567890"
+              prefix="+91"
+            />
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
