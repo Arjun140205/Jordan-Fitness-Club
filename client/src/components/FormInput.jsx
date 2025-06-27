@@ -6,7 +6,9 @@ const FormInput = ({
   name, 
   type = 'text', 
   register, 
-  error, 
+  error,
+  value,
+  onChange, 
   className = '',
   ...props 
 }) => {
@@ -21,17 +23,27 @@ const FormInput = ({
     return `${baseStyles} border-gray-200 focus:ring-blue-500 focus:border-blue-500`;
   };
 
+  const inputProps = register 
+    ? register(name)
+    : { name, value, onChange };
+
   return (
     <div className={`space-y-1 ${className}`}>
-      <label className="block text-sm font-medium text-gray-700">
+      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
         {label}
       </label>
-      <div className="relative">
+      <div className="relative flex items-center">
+        {props.prefix && (
+          <span className="absolute left-3 text-gray-500 select-none pointer-events-none">
+            {props.prefix}
+          </span>
+        )}
         <input
           type={isPassword && showPassword ? 'text' : type}
-          {...register(name)}
-          className={getInputStyles()}
+          {...inputProps}
+          className={getInputStyles() + (props.prefix ? ' pl-14' : '')}
           {...props}
+          {...(!register && { value: value ?? '', onChange })}
         />
         {isPassword && (
           <button
