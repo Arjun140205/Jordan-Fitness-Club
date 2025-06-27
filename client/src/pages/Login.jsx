@@ -20,6 +20,13 @@ const Login = () => {
   const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [showForgot, setShowForgot] = useState(false);
+  const [forgotStep, setForgotStep] = useState(1); // 1: email, 2: code+new pass
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotCode, setForgotCode] = useState("");
+  const [forgotNewPass, setForgotNewPass] = useState("");
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [forgotError, setForgotError] = useState("");
   
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
@@ -61,6 +68,46 @@ const Login = () => {
     }
   };
 
+  // Forgot password handlers
+  const handleForgotRequest = async (e) => {
+    e.preventDefault();
+    setForgotLoading(true);
+    setForgotError("");
+    try {
+      await axios.post("http://localhost:5001/api/auth/forgot-password", { email: forgotEmail });
+      toast.success("Reset code sent to your email");
+      setForgotStep(2);
+    } catch (err) {
+      if (err.response?.status === 404) {
+        setForgotError("Not a registered email. Please ");
+      } else {
+        toast.error(err.response?.data?.message || "Failed to send reset code");
+      }
+    }
+    setForgotLoading(false);
+  };
+
+  const handleForgotReset = async (e) => {
+    e.preventDefault();
+    setForgotLoading(true);
+    try {
+      await axios.post("http://localhost:5001/api/auth/reset-password", {
+        email: forgotEmail,
+        code: forgotCode,
+        newPassword: forgotNewPass,
+      });
+      toast.success("Password reset successful!");
+      setShowForgot(false);
+      setForgotStep(1);
+      setForgotEmail("");
+      setForgotCode("");
+      setForgotNewPass("");
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to reset password");
+    }
+    setForgotLoading(false);
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4 pt-24 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-black">
       <div 
@@ -82,72 +129,123 @@ const Login = () => {
             <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300">Welcome Back</h2>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Email
-              </label>
-              <input
+          {!showForgot ? (
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <FormInput
+                label="Email"
                 type="email"
-                defaultValue={localStorage.getItem("email") || ""}
-                {...register("email")}
-                className="w-full px-4 py-3 bg-white/50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-lg
-                         text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 
-                         focus:ring-[var(--secondary-color)]/50 transition-all duration-200"
+                name="email"
+                register={register}
+                error={errors.email}
                 placeholder="your@email.com"
               />
-              {errors.email && (
-                <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
-              )}
-            </div>
 
-            <div className="relative">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Password
-              </label>
-              <div className="relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  {...register("password")}
-                  className="w-full px-4 py-3 bg-white/50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-lg
-                           text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 
-                           focus:ring-[var(--secondary-color)]/50 transition-all duration-200"
-                  placeholder="••••••••"
-                />
+              <FormInput
+                label="Password"
+                type="password"
+                name="password"
+                register={register}
+                error={errors.password}
+                placeholder="••••••••"
+              />
+
+              <div className="flex items-center justify-between">
+                <label className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    className="w-4 h-4 text-[var(--secondary-color)] border-gray-300 rounded focus:ring-[var(--secondary-color)]"
+                  />
+                  <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">Remember me</span>
+                </label>
+                <span
+                  className="text-sm text-[var(--secondary-color)] hover:text-[var(--secondary-color-dark)] font-medium ml-auto cursor-pointer underline"
+                  onClick={() => setShowForgot(true)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyPress={e => { if (e.key === 'Enter') setShowForgot(true); }}
+                >
+                  Forgot Password?
+                </span>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-3 px-4 bg-[var(--secondary-color)] hover:bg-[var(--secondary-color-dark)]
+                         text-white font-semibold rounded-lg transition-all duration-200
+                         hover:shadow-lg hover:shadow-[var(--secondary-color)]/20"
+              >
+                Sign In
+              </button>
+            </form>
+          ) : (
+            <form className="space-y-6" onSubmit={forgotStep === 1 ? handleForgotRequest : handleForgotReset}>
+              {forgotStep === 1 && (
+                <>
+                  <FormInput
+                    label="Enter your registered email"
+                    type="email"
+                    name="forgotEmail"
+                    value={forgotEmail}
+                    onChange={e => setForgotEmail(e.target.value)}
+                    placeholder="your@email.com"
+                    required
+                  />
+                  {forgotError && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {forgotError}
+                      <Link to="/register" className="text-[var(--secondary-color)] hover:text-[var(--secondary-color-dark)] underline font-medium">Create an account</Link>
+                    </p>
+                  )}
+                </>
+              )}
+              {forgotStep === 2 && (
+                <>
+                  <FormInput
+                    label="Enter the code sent to your email"
+                    type="text"
+                    name="forgotCode"
+                    value={forgotCode}
+                    onChange={e => setForgotCode(e.target.value)}
+                    placeholder="6-digit code"
+                    required
+                  />
+                  <FormInput
+                    label="New Password"
+                    type="password"
+                    name="forgotNewPass"
+                    value={forgotNewPass}
+                    onChange={e => setForgotNewPass(e.target.value)}
+                    placeholder="••••••••"
+                    required
+                  />
+                </>
+              )}
+              <div className="flex items-center justify-between">
                 <button
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                  className="text-sm text-gray-500 hover:text-gray-700 font-medium"
+                  onClick={() => {
+                    setShowForgot(false);
+                    setForgotStep(1);
+                    setForgotEmail("");
+                    setForgotCode("");
+                    setForgotNewPass("");
+                  }}
                 >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  Back to Login
+                </button>
+                <button
+                  type="submit"
+                  className="py-2 px-4 bg-[var(--secondary-color)] hover:bg-[var(--secondary-color-dark)] text-white font-semibold rounded-lg transition-all duration-200"
+                  disabled={forgotLoading}
+                >
+                  {forgotStep === 1 ? (forgotLoading ? "Sending..." : "Send Code") : (forgotLoading ? "Resetting..." : "Reset Password")}
                 </button>
               </div>
-              {errors.password && (
-                <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
-              )}
-            </div>
-
-            <div className="flex items-center justify-between">
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                  className="w-4 h-4 text-[var(--secondary-color)] border-gray-300 rounded focus:ring-[var(--secondary-color)]"
-                />
-                <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">Remember me</span>
-              </label>
-            </div>
-
-            <button
-              type="submit"
-              className="w-full py-3 px-4 bg-[var(--secondary-color)] hover:bg-[var(--secondary-color-dark)]
-                       text-white font-semibold rounded-lg transition-all duration-200
-                       hover:shadow-lg hover:shadow-[var(--secondary-color)]/20"
-            >
-              Sign In
-            </button>
-          </form>
+            </form>
+          )}
 
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600 dark:text-gray-400">
