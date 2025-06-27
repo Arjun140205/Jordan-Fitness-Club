@@ -48,6 +48,12 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  resetCode: {
+    type: String,
+  },
+  resetCodeExpiry: {
+    type: Number,
+  },
 }, { timestamps: true });
 
 const User = mongoose.model("User", userSchema);
