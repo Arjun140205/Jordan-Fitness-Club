@@ -22,6 +22,7 @@ import { endpoints } from "../constants/config";
 import Skeleton from "../components/Skeleton";
 import NotificationLogs from "../components/NotificationLogs";
 import PageTransition from "../components/PageTransition";
+import { useForm } from "react-hook-form";
 
 const AdminDashboard = () => {
   const [selectedTab, setSelectedTab] = useState(0);
@@ -46,6 +47,11 @@ const AdminDashboard = () => {
     users: [],
     notifications: []
   });
+  const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
+  const [addUserLoading, setAddUserLoading] = useState(false);
+  const [addPlanLoading, setAddPlanLoading] = useState(false);
+  const [planForm, setPlanForm] = useState({ name: "", duration: "", price: "", features: "" });
+  const { register: userRegister, handleSubmit: handleUserSubmit, reset: resetUserForm, formState: { errors: userErrors } } = useForm();
 
   // Define tabs
   const tabs = ["Users", "Notifications"];
@@ -178,6 +184,52 @@ const AdminDashboard = () => {
       console.error("Error sending notification:", error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Add User handler
+  const onAddUser = async (data) => {
+    setAddUserLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      await axios.post(
+        "http://localhost:5001/api/admin/add-user",
+        data,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      toast.success("User added successfully!");
+      setIsAddUserModalOpen(false);
+      resetUserForm();
+      fetchDashboardData();
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to add user");
+    } finally {
+      setAddUserLoading(false);
+    }
+  };
+
+  // Add Plan handler
+  const onAddPlan = async () => {
+    setAddPlanLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      await axios.post(
+        "http://localhost:5001/api/admin/add-plan",
+        {
+          name: planForm.name,
+          duration: Number(planForm.duration),
+          price: Number(planForm.price),
+          features: planForm.features.split(",").map(f => f.trim()).filter(Boolean),
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      toast.success("Plan added successfully!");
+      setPlanForm({ name: "", duration: "", price: "", features: "" });
+      fetchDashboardData();
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to add plan");
+    } finally {
+      setAddPlanLoading(false);
     }
   };
 
@@ -422,7 +474,7 @@ const AdminDashboard = () => {
                   <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-4 md:p-6 shadow-lg border border-white/50">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                       <h3 className="text-xl font-semibold">User Management</h3>
-                      <button className={getButtonStyles("bg-blue-600 hover:bg-blue-700")}>
+                      <button className={getButtonStyles("bg-blue-600 hover:bg-blue-700")} onClick={() => setIsAddUserModalOpen(true)}>
                         <UserPlus className="w-5 h-5" />
                         <span className="hidden sm:inline">Add New User</span>
                         <span className="sm:hidden">Add User</span>
@@ -532,31 +584,37 @@ const AdminDashboard = () => {
                           placeholder="Plan Name"
                           className="w-full px-4 py-2 rounded-lg bg-white dark:bg-gray-600 border
                                    border-gray-200 dark:border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          value={planForm.name}
+                          onChange={e => setPlanForm({ ...planForm, name: e.target.value })}
                         />
                         <input
                           type="number"
                           placeholder="Duration (months)"
                           className="w-full px-4 py-2 rounded-lg bg-white dark:bg-gray-600 border
                                    border-gray-200 dark:border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          value={planForm.duration}
+                          onChange={e => setPlanForm({ ...planForm, duration: e.target.value })}
                         />
                         <input
                           type="number"
                           placeholder="Price"
                           className="w-full px-4 py-2 rounded-lg bg-white dark:bg-gray-600 border
                                    border-gray-200 dark:border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          value={planForm.price}
+                          onChange={e => setPlanForm({ ...planForm, price: e.target.value })}
                         />
-                        <select
+                        <input
+                          type="text"
+                          placeholder="Features (comma separated)"
                           className="w-full px-4 py-2 rounded-lg bg-white dark:bg-gray-600 border
                                    border-gray-200 dark:border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
-                          <option value="">Select Status</option>
-                          <option value="active">Active</option>
-                          <option value="inactive">Inactive</option>
-                        </select>
+                          value={planForm.features}
+                          onChange={e => setPlanForm({ ...planForm, features: e.target.value })}
+                        />
                       </div>
-                      <button className={getButtonStyles("bg-blue-600 hover:bg-blue-700") + " mt-4"}>
+                      <button className={getButtonStyles("bg-blue-600 hover:bg-blue-700") + " mt-4"} onClick={onAddPlan} disabled={addPlanLoading}>
                         <Plus className="w-5 h-5" />
-                        Add Plan
+                        {addPlanLoading ? "Adding..." : "Add Plan"}
                       </button>
                     </div>
 
@@ -674,6 +732,72 @@ const AdminDashboard = () => {
 
             {/* Payment Reminder Modal */}
             {PaymentReminderModal}
+
+            {/* Add User Modal */}
+            <Transition appear show={isAddUserModalOpen} as={Fragment}>
+              <Dialog as="div" className="relative z-50" onClose={() => setIsAddUserModalOpen(false)}>
+                <Transition.Child
+                  as={Fragment}
+                  enter="ease-out duration-300"
+                  enterFrom="opacity-0"
+                  enterTo="opacity-100"
+                  leave="ease-in duration-200"
+                  leaveFrom="opacity-100"
+                  leaveTo="opacity-0"
+                >
+                  <div className="fixed inset-0 bg-black/25" />
+                </Transition.Child>
+                <div className="fixed inset-0 overflow-y-auto">
+                  <div className="flex min-h-full items-center justify-center p-4 text-center">
+                    <Transition.Child
+                      as={Fragment}
+                      enter="ease-out duration-300"
+                      enterFrom="opacity-0 scale-95"
+                      enterTo="opacity-100 scale-100"
+                      leave="ease-in duration-200"
+                      leaveFrom="opacity-100 scale-100"
+                      leaveTo="opacity-0 scale-95"
+                    >
+                      <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                        <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900 mb-4">
+                          Add New User
+                        </Dialog.Title>
+                        <form onSubmit={handleUserSubmit(onAddUser)} className="space-y-4">
+                          <div>
+                            <label className="block text-sm font-medium mb-1">Name</label>
+                            <input className="w-full px-3 py-2 border rounded" {...userRegister("name", { required: true })} />
+                            {userErrors.name && <span className="text-xs text-red-500">Name is required</span>}
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium mb-1">Email</label>
+                            <input className="w-full px-3 py-2 border rounded" type="email" {...userRegister("email", { required: true })} />
+                            {userErrors.email && <span className="text-xs text-red-500">Email is required</span>}
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium mb-1">Phone</label>
+                            <input className="w-full px-3 py-2 border rounded" {...userRegister("phone", { required: true })} />
+                            {userErrors.phone && <span className="text-xs text-red-500">Phone is required</span>}
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium mb-1">Password</label>
+                            <input className="w-full px-3 py-2 border rounded" type="password" {...userRegister("password", { required: true })} />
+                            {userErrors.password && <span className="text-xs text-red-500">Password is required</span>}
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium mb-1">Role</label>
+                            <select className="w-full px-3 py-2 border rounded" {...userRegister("role")}> <option value="user">User</option> <option value="admin">Admin</option> </select>
+                          </div>
+                          <div className="flex justify-end gap-2 mt-4">
+                            <button type="button" className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded hover:bg-gray-200" onClick={() => setIsAddUserModalOpen(false)}>Cancel</button>
+                            <button type="submit" className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700" disabled={addUserLoading}>{addUserLoading ? "Adding..." : "Add User"}</button>
+                          </div>
+                        </form>
+                      </Dialog.Panel>
+                    </Transition.Child>
+                  </div>
+                </div>
+              </Dialog>
+            </Transition>
           </div>
         </div>
       </PageTransition>
