@@ -1,5 +1,6 @@
 import express from "express";
 import authMiddleware from "../middleware/authMiddleware.js";
+import { createRazorpayOrder, verifyRazorpayPayment } from "../controllers/paymentController.js";
 
 const router = express.Router();
 
@@ -45,5 +46,10 @@ router.get("/dashboard", authMiddleware, (req, res) => {
     });
   }
 });
+
+// Create Razorpay order
+router.post("/razorpay-order", authMiddleware, createRazorpayOrder);
+// Verify Razorpay payment
+router.post("/razorpay-verify", authMiddleware, verifyRazorpayPayment);
 
 export default router;
