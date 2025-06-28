@@ -21,6 +21,7 @@
     "mongodb": "^6.17.0",
     "mongoose": "^8.15.1",
     "nodemailer": "^7.0.3",
+    "razorpay": "^2.9.6",
     "react-hot-toast": "^2.5.2",
     "twilio": "^5.7.1"
   },
