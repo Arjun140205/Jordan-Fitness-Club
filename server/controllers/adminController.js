@@ -3,6 +3,8 @@ import NotificationLog from "../models/NotificationLog.js";
 import User from "../models/User.js";
 import nodemailer from "nodemailer";
 import axios from "axios";
+import Plan from "../models/Plan.js";
+import bcrypt from "bcryptjs";
 
 // Fetch recent 100 notification logs
 export const getNotificationLogs = async (req, res) => {
@@ -143,5 +145,36 @@ export const sendPendingFeeNotifications = async (req, res) => {
   } catch (error) {
     console.error("Notification error:", error);
     res.status(500).json({ message: "Failed to send notifications", error: error.message });
+  }
+};
+
+// Add new user (admin only)
+export const addUser = async (req, res) => {
+  try {
+    const { name, email, phone, password, role } = req.body;
+    if (!name || !email || !phone || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+    const exists = await User.findOne({ email });
+    if (exists) return res.status(400).json({ message: "Email already registered" });
+    const hashed = await bcrypt.hash(password, 10);
+    const user = await User.create({ name, email, phone, password: hashed, role: role || "user" });
+    res.status(201).json({ message: "User added", user });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to add user", error: err.message });
+  }
+};
+
+// Add new plan (admin only)
+export const addPlan = async (req, res) => {
+  try {
+    const { name, duration, price, features } = req.body;
+    if (!name || !duration || !price) {
+      return res.status(400).json({ message: "Name, duration, and price are required" });
+    }
+    const plan = await Plan.create({ name, duration, price, features });
+    res.status(201).json({ message: "Plan added", plan });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to add plan", error: err.message });
   }
 };
