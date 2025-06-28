@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 import Skeleton from "../components/Skeleton";
+import axios from "axios";
 
 const UserDashboard = () => {
   const [data, setData] = useState(null);
@@ -48,6 +49,81 @@ const UserDashboard = () => {
   const calculateProgress = () => {
     if (!data) return 0;
     return Math.round((data.attendedClasses / data.totalClasses) * 100);
+  };
+
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  const handleRazorpayPayment = async () => {
+    const res = await loadRazorpayScript();
+    if (!res) {
+      toast.error("Razorpay SDK failed to load. Are you online?");
+      return;
+    }
+
+    // Get order from backend
+    try {
+      const token = localStorage.getItem("token");
+      const amount = Number(data.paymentDue.replace(/[^0-9.]/g, "")) * 100; // in paise
+      const orderRes = await axios.post(
+        "http://localhost:5001/api/user/razorpay-order",
+        { amount },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const order = orderRes.data.order;
+
+      const options = {
+        key: "rzp_test_YourTestKeyHere", // Replace with your Razorpay test key
+        amount: order.amount,
+        currency: order.currency,
+        name: "Jordan Fitness Club",
+        description: "Membership Fee Payment",
+        image: "/logo.png",
+        order_id: order.id,
+        handler: async function (response) {
+          toast.success("Payment successful! Payment ID: " + response.razorpay_payment_id);
+          // Call backend to verify and update payment status
+          try {
+            await axios.post(
+              "http://localhost:5001/api/user/razorpay-verify",
+              {
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              },
+              { headers: { Authorization: `Bearer ${token}` } }
+            );
+            toast.success("Payment verified and status updated!");
+          } catch (err) {
+            toast.error("Payment verification failed: " + (err.response?.data?.message || err.message));
+          }
+        },
+        prefill: {
+          name: data.name,
+          email: data.email || "user@email.com",
+          contact: data.phone || "9999999999",
+        },
+        theme: {
+          color: "#fbbf24",
+        },
+        modal: {
+          ondismiss: function () {
+            toast("Payment popup closed");
+          },
+        },
+      };
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (err) {
+      toast.error("Failed to initiate payment: " + (err.response?.data?.message || err.message));
+    }
   };
 
   if (loading) {
@@ -152,7 +228,7 @@ const UserDashboard = () => {
                 <p className="text-white">{format(new Date(data.paymentDate), 'MMM dd, yyyy')}</p>
               </div>
               {data.paymentStatus === "Pending" && (
-                <button className="w-full btn-primary py-2">Pay Now</button>
+                <button className="w-full btn-primary py-2" onClick={handleRazorpayPayment}>Pay Now</button>
               )}
             </div>
           </motion.div>
