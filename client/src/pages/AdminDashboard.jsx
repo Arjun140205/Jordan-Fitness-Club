@@ -193,7 +193,7 @@ const AdminDashboard = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.post(
-        "http://localhost:5001/api/admin/add-user",
+        `${API_URL}/admin/add-user`,
         data,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -214,7 +214,7 @@ const AdminDashboard = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.post(
-        "http://localhost:5001/api/admin/add-plan",
+        `${API_URL}/admin/add-plan`,
         {
           name: planForm.name,
           duration: Number(planForm.duration),
