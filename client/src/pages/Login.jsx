@@ -34,7 +34,7 @@ const Login = () => {
 
   const onSubmit = async (data) => {
     try {
-      const res = await axios.post("http://localhost:5001/api/auth/login", data);
+      const res = await axios.post(endpoints.auth.login, data);
       
       // Handle remember me
       if (rememberMe) {
@@ -74,7 +74,7 @@ const Login = () => {
     setForgotLoading(true);
     setForgotError("");
     try {
-      await axios.post("http://localhost:5001/api/auth/forgot-password", { email: forgotEmail });
+      await axios.post(`${API_URL}/auth/forgot-password`, { email: forgotEmail });
       toast.success("Reset code sent to your email");
       setForgotStep(2);
     } catch (err) {
@@ -91,7 +91,7 @@ const Login = () => {
     e.preventDefault();
     setForgotLoading(true);
     try {
-      await axios.post("http://localhost:5001/api/auth/reset-password", {
+      await axios.post(`${API_URL}/auth/reset-password`, {
         email: forgotEmail,
         code: forgotCode,
         newPassword: forgotNewPass,
