@@ -8,20 +8,18 @@ export default defineConfig({
     postcss: './postcss.config.js',
   },
   build: {
+    commonjsOptions: {
+      transformMixedEsModules: true,
+    },
     rollupOptions: {
-      external: ['react-icons'],
       output: {
-        globals: {
-          'react-icons': 'ReactIcons',
-          'react-icons/ri': 'ReactIconsRI'
+        manualChunks: {
+          'react-icons': ['react-icons']
         }
       }
-    },
-    commonjsOptions: {
-      transformMixedEsModules: true
     }
   },
   optimizeDeps: {
-    include: ['react-icons']
+    include: ['react-icons/ri']
   }
 })
