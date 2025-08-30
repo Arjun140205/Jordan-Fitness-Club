@@ -24,7 +24,13 @@ const app = express();
 
 // Debug middleware to log CORS issues
 app.use((req, res, next) => {
-  console.log('Origin:', req.headers.origin);
+  if (req.headers.origin) {
+    console.log(`[CORS] Request from origin: ${req.headers.origin}`);
+  } else if (req.headers['user-agent']?.includes('Render')) {
+    console.log('[Internal] Render health check');
+  } else {
+    console.log(`[Direct] Request from ${req.ip} - ${req.headers['user-agent'] || 'Unknown Agent'}`);
+  }
   next();
 });
 
