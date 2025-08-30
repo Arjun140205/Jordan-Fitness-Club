@@ -2,24 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import "./home.css";
 import MembershipSection from "../components/MembershipSection";
-import { 
-  RiBoxingFill, 
-  RiHeartPulseFill, 
-  RiRunLine,
-  RiShoppingBasketFill,
-  RiUserStarFill,
-  RiVidiconFill,
-  RiBuildingLine,
-  RiCheckboxCircleLine,
-  RiArrowRightLine,
-  RiArrowLeftLine,
-  RiDoubleQuotesR,
-  RiStarFill,
-  RiStarHalfFill,
-  RiFacebookFill,
-  RiInstagramLine,
-  RiTwitterFill
-} from 'react-icons/ri';
+import * as Ri from "react-icons/ri";
 
 import headerImage from "../assets/header.png";
 import class1Image from "../assets/class-1.jpg";
@@ -107,7 +90,7 @@ const Home = () => {
               <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{program.title}</h4>
               <p className="text-gray-600 dark:text-[var(--text-light)] mb-4">{program.description}</p>
               <Link to="/register" className="text-gray-900 dark:text-white hover:text-[var(--secondary-color)] flex items-center gap-2">
-                Join Now <RiArrowRightLine />
+                Join Now <Ri.RiArrowRightLine />
               </Link>
             </motion.div>
           ))}

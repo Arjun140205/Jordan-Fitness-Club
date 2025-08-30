@@ -7,4 +7,21 @@ export default defineConfig({
   css: {
     postcss: './postcss.config.js',
   },
+  build: {
+    rollupOptions: {
+      external: ['react-icons'],
+      output: {
+        globals: {
+          'react-icons': 'ReactIcons',
+          'react-icons/ri': 'ReactIconsRI'
+        }
+      }
+    },
+    commonjsOptions: {
+      transformMixedEsModules: true
+    }
+  },
+  optimizeDeps: {
+    include: ['react-icons']
+  }
 })
