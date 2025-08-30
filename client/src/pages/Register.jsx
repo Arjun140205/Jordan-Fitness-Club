@@ -39,7 +39,7 @@ const Register = () => {
       if (!phone.startsWith('+91')) {
         phone = '+91' + phone;
       }
-      await axios.post("http://localhost:5001/api/auth/register", { ...data, phone });
+      await axios.post(endpoints.auth.register, { ...data, phone });
       toast.success("Registration successful!");
       setTimeout(() => {
         navigate("/login");
