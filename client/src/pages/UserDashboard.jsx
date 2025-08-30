@@ -73,7 +73,7 @@ const UserDashboard = () => {
       const token = localStorage.getItem("token");
       const amount = Number(data.paymentDue.replace(/[^0-9.]/g, "")) * 100; // in paise
       const orderRes = await axios.post(
-        "http://localhost:5001/api/user/razorpay-order",
+        `${API_URL}/user/razorpay-order`,
         { amount },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -92,7 +92,7 @@ const UserDashboard = () => {
           // Call backend to verify and update payment status
           try {
             await axios.post(
-              "http://localhost:5001/api/user/razorpay-verify",
+              `${API_URL}/user/razorpay-verify`,
               {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
