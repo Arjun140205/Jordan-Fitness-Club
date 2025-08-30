@@ -39,10 +39,76 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// API Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/user', userRoutes);
-app.use('/api/admin', adminRoutes);
+// Root route for basic check
+app.get('/', (req, res) => {
+  res.json({ message: 'Server is running' });
+});
+
+// Debug route to see all registered routes
+app.get('/debug/routes', (req, res) => {
+  const routes = [];
+  
+  function extractRoutes(stack, basePath = '') {
+    stack.forEach(middleware => {
+      if (middleware.route) {
+        // Direct route
+        const methods = Object.keys(middleware.route.methods).join(',');
+        routes.push({
+          path: basePath + middleware.route.path,
+          methods,
+          type: 'route'
+        });
+      } else if (middleware.name === 'router') {
+        // Router middleware
+        let path = middleware.regexp.toString();
+        if (path.includes('^\\')) {
+          path = path.split('\\')[1].split('?')[0];
+        }
+        
+        middleware.handle.stack.forEach(handler => {
+          if (handler.route) {
+            const methods = Object.keys(handler.route.methods).join(',');
+            routes.push({
+              path: basePath + path + handler.route.path,
+              methods,
+              type: 'router'
+            });
+          }
+        });
+      } else {
+        // Other middleware
+        routes.push({
+          path: basePath,
+          name: middleware.name,
+          type: 'middleware'
+        });
+      }
+    });
+  }
+  
+  extractRoutes(app._router.stack);
+  res.json({ 
+    totalRoutes: routes.length,
+    routes: routes,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// API Routes with error logging
+app.use('/api/auth', (req, res, next) => {
+  console.log(`Auth Route accessed: ${req.method} ${req.path}`);
+  next();
+}, authRoutes);
+
+app.use('/api/user', (req, res, next) => {
+  console.log(`User Route accessed: ${req.method} ${req.path}`);
+  next();
+}, userRoutes);
+
+app.use('/api/admin', (req, res, next) => {
+  console.log(`Admin Route accessed: ${req.method} ${req.path}`);
+  next();
+}, adminRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -52,12 +118,32 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Debug catch-all route to log all requests
+app.use((req, res, next) => {
+  console.log(`[DEBUG] Incoming request: ${req.method} ${req.url}`);
+  console.log('[DEBUG] Headers:', req.headers);
+  console.log('[DEBUG] Body:', req.body);
+  next();
+});
+
+// 404 handler
+app.use((req, res, next) => {
+  console.log(`404 Not Found: ${req.method} ${req.url}`);
+  res.status(404).json({
+    error: 'Not Found',
+    message: `Cannot ${req.method} ${req.url}`,
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
+  console.error(`Error: ${err.message}`);
   console.error(err.stack);
   res.status(500).json({ 
     error: 'Something went wrong!',
-    message: err.message 
+    message: err.message,
+    timestamp: new Date().toISOString()
   });
 });
 

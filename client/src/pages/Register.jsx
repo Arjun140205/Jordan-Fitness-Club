@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import toast, { Toaster } from "react-hot-toast";
 import { UserPlus } from "lucide-react";
 import FormInput from "../components/FormInput";
+import { endpoints } from "../constants/config";
 
 const schema = yup.object({
   name: yup.string()
@@ -39,6 +40,8 @@ const Register = () => {
       if (!phone.startsWith('+91')) {
         phone = '+91' + phone;
       }
+      console.log('Register URL:', endpoints.auth.register);
+      console.log('Register Data:', { ...data, phone });
       await axios.post(endpoints.auth.register, { ...data, phone });
       toast.success("Registration successful!");
       setTimeout(() => {
