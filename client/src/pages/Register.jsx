@@ -4,10 +4,14 @@ import * as yup from "yup";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { motion } from "framer-motion";
-import toast, { Toaster } from "react-hot-toast";
-import { UserPlus } from "lucide-react";
-import FormInput from "../components/FormInput";
+import toast from "react-hot-toast";
+import { Eye, EyeOff, ArrowRight, Dumbbell, Check } from "lucide-react";
+import { useState } from "react";
 import { endpoints } from "../constants/config";
+import "../styles/auth.css";
+
+// Import fitness image
+import heroImage from "../assets/header.png";
 
 const schema = yup.object({
   name: yup.string()
@@ -18,7 +22,7 @@ const schema = yup.object({
     .required("Email is required"),
   phone: yup.string()
     .required("Phone number is required")
-    .matches(/^\+91[0-9]{10}$/, "Phone number must be in +911234567890 format"),
+    .matches(/^[0-9]{10}$/, "Phone number must be 10 digits"),
   password: yup.string()
     .required("Password is required")
     .min(6, "Password must be at least 6 characters"),
@@ -27,21 +31,29 @@ const schema = yup.object({
 
 const Register = () => {
   const navigate = useNavigate();
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { register, handleSubmit, formState: { errors }, watch } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
       role: 'user'
     }
   });
 
+  const password = watch("password", "");
+
+  // Password strength indicators
+  const passwordChecks = {
+    length: password.length >= 6,
+    hasNumber: /\d/.test(password),
+    hasLetter: /[a-zA-Z]/.test(password),
+  };
+
   const onSubmit = async (data) => {
+    setIsLoading(true);
     try {
-      let phone = data.phone;
-      if (!phone.startsWith('+91')) {
-        phone = '+91' + phone;
-      }
-      console.log('Register URL:', endpoints.auth.register);
-      console.log('Register Data:', { ...data, phone });
+      const phone = '+91' + data.phone;
       await axios.post(endpoints.auth.register, { ...data, phone });
       toast.success("Registration successful!");
       setTimeout(() => {
@@ -49,112 +61,304 @@ const Register = () => {
       }, 1000);
     } catch (err) {
       toast.error(err.response?.data?.message || "Registration failed");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 pt-24 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-black">
-      {/* Background Pattern */}
-      <div className="fixed inset-0 z-0 opacity-5 dark:opacity-10"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M54.627 0l.83.828-1.415 1.415L51.8 0h2.827zM5.373 0l-.83.828L5.96 2.243 8.2 0H5.374zM48.97 0l3.657 3.657-1.414 1.414L46.143 0h2.828zM11.03 0L7.372 3.657 8.787 5.07 13.857 0H11.03zm32.284 0L49.8 6.485 48.384 7.9l-7.9-7.9h2.83zM16.686 0L10.2 6.485 11.616 7.9l7.9-7.9h-2.83zm20.97 0l9.315 9.314-1.414 1.414L34.828 0h2.83zM22.344 0L13.03 9.314l1.414 1.414L25.172 0h-2.83zM32 0l12.142 12.142-1.414 1.414L30 .828 17.272 13.556l-1.414-1.414L28 0h4zM.284 0l28 28-1.414 1.414L0 2.544V0h.284zM0 5.373l25.456 25.455-1.414 1.415L0 8.2V5.374zm0 5.656l22.627 22.627-1.414 1.414L0 13.86v-2.83zm0 5.656l19.8 19.8-1.415 1.413L0 19.514v-2.83zm0 5.657l16.97 16.97-1.414 1.415L0 25.172v-2.83zM0 28l14.142 14.142-1.414 1.414L0 30.828V28zm0 5.657L11.314 44.97 9.9 46.386l-9.9-9.9v-2.828zm0 5.657L8.485 47.8 7.07 49.212 0 42.143v-2.83zm0 5.657l5.657 5.657-1.414 1.415L0 47.8v-2.83zm0 5.657l2.828 2.83-1.414 1.413L0 53.456v-2.83zM54.627 60L30 35.373 5.373 60H8.2L30 38.2 51.8 60h2.827zm-5.656 0L30 41.03 11.03 60h2.828L30 43.858 46.142 60h2.83zm-5.656 0L30 46.686 16.686 60h2.83L30 49.515 40.485 60h2.83zm-5.657 0L30 52.343 22.344 60h2.83L30 55.172 34.828 60h2.83zM32 60l-2-2-2 2h4zM59.716 0l-28 28 1.414 1.414L60 2.544V0h-.284zM60 5.373L34.544 30.828l1.414 1.415L60 8.2V5.374zm0 5.656L37.373 33.656l1.414 1.414L60 13.86v-2.83zm0 5.656l-19.8 19.8 1.415 1.413L60 19.514v-2.83zm0 5.657l-16.97 16.97 1.414 1.415L60 25.172v-2.83zM60 28L45.858 42.142l1.414 1.414L60 30.828V28zm0 5.657L48.686 44.97l1.415 1.415 9.9-9.9v-2.828zm0 5.657L51.515 47.8l1.414 1.413 7.07-7.07v-2.83zm0 5.657l-5.657 5.657 1.414 1.415L60 47.8v-2.83zm0 5.657l-2.828 2.83 1.414 1.413L60 53.456v-2.83zM39.9 16.385l1.414-1.414L30 3.658 18.686 14.97l1.415 1.415 9.9-9.9 9.9 9.9zm-2.83 2.828l1.415-1.414L30 9.313 21.515 17.8l1.414 1.413 7.07-7.07 7.07 7.07zm-2.827 2.83l1.414-1.416L30 14.97l-5.657 5.657 1.414 1.415L30 17.8l4.242 4.242zm-2.83 2.827l1.415-1.414L30 20.626l-2.828 2.83 1.414 1.414L30 23.456l1.414 1.414zM56.87 59.414L58 58 30 29.716 1.716 58l1.414 1.414L30 32.544l26.87 26.87z' fill='%23000000' fill-opacity='0.8' fill-rule='evenodd'/%3E%3C/svg%3E")`,
-        }}
-      />
+    <div className="auth-split-container">
+      {/* Background Effects */}
+      <div className="auth-gradient-bg" />
+      <div className="auth-noise" />
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-md z-10"
-      >
-        <div className="glassmorphism p-8 rounded-2xl">
-          <div className="flex items-center justify-center mb-8">
-            <UserPlus className="w-8 h-8 text-[var(--secondary-color)] mr-2" />
-            <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300">Create Account</h2>
-          </div>
+      {/* Brand Panel - Desktop Only */}
+      <div className="auth-brand-panel">
+        <div className="auth-brand-image">
+          <img src={heroImage} alt="Fitness" />
+        </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <FormInput
-              label="Full Name"
-              type="text"
-              name="name"
-              register={register}
-              error={errors.name}
-              placeholder="John Doe"
-            />
+        <div className="auth-grid-lines" />
+        <div className="auth-corner-accent top-left" />
+        <div className="auth-corner-accent bottom-right" />
 
-            <FormInput
-              label="Email"
-              type="email"
-              name="email"
-              register={register}
-              error={errors.email}
-              placeholder="your@email.com"
-            />
+        {/* Cinematic Light Streaks */}
+        <div className="auth-light-streak" />
+        <div className="auth-light-streak" />
+        <div className="auth-light-streak" />
 
-            <FormInput
-              label="Phone Number"
-              type="text"
-              name="phone"
-              register={register}
-              error={errors.phone}
-              placeholder="1234567890"
-              prefix="+91"
-            />
+        <motion.div
+          className="auth-brand-content"
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+        >
+          <h1 className="auth-brand-tagline">
+            <span className="auth-text-reveal"><span>Begin</span></span>
+            <br />
+            <span className="auth-text-reveal" style={{ animationDelay: '0.1s' }}><span>Your</span></span>
+            {' '}
+            <span className="auth-text-reveal highlight" style={{ animationDelay: '0.2s' }}><span>Journey</span></span>
+          </h1>
+          <p className="auth-brand-subtitle">
+            Your transformation starts with a single step. Join thousands who've already redefined their potential.
+          </p>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Password
-              </label>
-              <input
-                type="password"
-                {...register("password")}
-                className="w-full px-4 py-3 bg-white/50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-lg
-                         text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 
-                         focus:ring-[var(--secondary-color)]/50 transition-all duration-200"
-                placeholder="••••••••"
-              />
-              {errors.password && (
-                <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
-              )}
+          {/* Feature List */}
+          <motion.div
+            className="mt-10 space-y-4 text-left"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+          >
+            {[
+              "Access to premium equipment",
+              "Expert personal trainers",
+              "Flexible membership plans"
+            ].map((feature, index) => (
+              <div
+                key={index}
+                className="flex items-center gap-3 text-white/60"
+              >
+                <div className="w-5 h-5 rounded-full bg-[var(--secondary-color)]/20 flex items-center justify-center">
+                  <Check className="w-3 h-3 text-[var(--secondary-color)]" />
+                </div>
+                <span className="text-sm">{feature}</span>
+              </div>
+            ))}
+          </motion.div>
+        </motion.div>
+      </div>
+
+      {/* Form Panel */}
+      <div className="auth-form-panel">
+        <div className="auth-form-container">
+          {/* Logo */}
+          <motion.div
+            className="flex items-center gap-3 mb-10"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[var(--secondary-color)] to-[var(--secondary-color-dark)] flex items-center justify-center">
+              <Dumbbell className="w-6 h-6 text-black" />
             </div>
+            <span className="text-white font-semibold text-lg tracking-tight">Jordan Fitness</span>
+          </motion.div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Role
-              </label>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            <h2 className="auth-heading">Create account</h2>
+            <p className="auth-subheading">Start your fitness journey today</p>
+          </motion.div>
+
+          <form onSubmit={handleSubmit(onSubmit)}>
+            {/* Name Input */}
+            <motion.div
+              className="premium-input-wrapper"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.15 }}
+            >
+              <input
+                type="text"
+                {...register("name")}
+                className={`premium-input ${errors.name ? 'error' : ''}`}
+                placeholder="Full Name"
+                autoComplete="name"
+              />
+              <label className="premium-label">Full Name</label>
+              <div className="premium-input-line" />
+              {errors.name && (
+                <p className="error-message">{errors.name.message}</p>
+              )}
+            </motion.div>
+
+            {/* Email Input */}
+            <motion.div
+              className="premium-input-wrapper"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <input
+                type="email"
+                {...register("email")}
+                className={`premium-input ${errors.email ? 'error' : ''}`}
+                placeholder="Email"
+                autoComplete="email"
+              />
+              <label className="premium-label">Email Address</label>
+              <div className="premium-input-line" />
+              {errors.email && (
+                <p className="error-message">{errors.email.message}</p>
+              )}
+            </motion.div>
+
+            {/* Phone Input */}
+            <motion.div
+              className="premium-input-wrapper"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.25 }}
+            >
+              <div className="phone-input-wrapper">
+                <span className="phone-prefix">+91</span>
+                <input
+                  type="tel"
+                  {...register("phone")}
+                  className={`premium-input ${errors.phone ? 'error' : ''}`}
+                  placeholder="Phone Number"
+                  autoComplete="tel"
+                  maxLength={10}
+                />
+              </div>
+              <label className="premium-label" style={{ left: '5rem' }}>Phone Number</label>
+              {errors.phone && (
+                <p className="error-message">{errors.phone.message}</p>
+              )}
+            </motion.div>
+
+            {/* Password Input */}
+            <motion.div
+              className="premium-input-wrapper"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
+              <input
+                type={showPassword ? 'text' : 'password'}
+                {...register("password")}
+                className={`premium-input ${errors.password ? 'error' : ''}`}
+                placeholder="Password"
+                autoComplete="new-password"
+                style={{ paddingRight: '3rem' }}
+              />
+              <label className="premium-label">Password</label>
+              <div className="premium-input-line" />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="password-toggle"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+              {errors.password && (
+                <p className="error-message">{errors.password.message}</p>
+              )}
+            </motion.div>
+
+            {/* Password Strength Indicator */}
+            {password && (
+              <motion.div
+                className="mb-6 space-y-2"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="flex gap-1">
+                  {[passwordChecks.length, passwordChecks.hasLetter, passwordChecks.hasNumber].map((check, i) => (
+                    <div
+                      key={i}
+                      className={`h-1 flex-1 rounded-full transition-colors duration-300 ${check ? 'bg-[var(--secondary-color)]' : 'bg-white/10'
+                        }`}
+                    />
+                  ))}
+                </div>
+                <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
+                  <span className={passwordChecks.length ? 'text-[var(--secondary-color)]' : 'text-white/40'}>
+                    ✓ 6+ characters
+                  </span>
+                  <span className={passwordChecks.hasLetter ? 'text-[var(--secondary-color)]' : 'text-white/40'}>
+                    ✓ Contains letter
+                  </span>
+                  <span className={passwordChecks.hasNumber ? 'text-[var(--secondary-color)]' : 'text-white/40'}>
+                    ✓ Contains number
+                  </span>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Role Select */}
+            <motion.div
+              className="premium-input-wrapper"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.35 }}
+            >
               <select
                 {...register("role")}
-                className="w-full px-4 py-3 bg-white/50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-lg
-                         text-gray-900 dark:text-white focus:outline-none focus:ring-2 
-                         focus:ring-[var(--secondary-color)]/50 transition-all duration-200"
+                className="premium-select"
               >
-                <option value="user">User</option>
+                <option value="user">Member</option>
                 <option value="admin">Admin</option>
               </select>
-            </div>
+              <label className="premium-label" style={{ top: '0.5rem', fontSize: '0.75rem', color: 'var(--secondary-color)' }}>
+                Account Type
+              </label>
+            </motion.div>
 
-            <button
+            {/* Submit Button */}
+            <motion.button
               type="submit"
-              className="w-full py-3 px-4 bg-[var(--secondary-color)] hover:bg-[var(--secondary-color-dark)]
-                       text-white font-semibold rounded-lg transition-all duration-200
-                       hover:shadow-lg hover:shadow-[var(--secondary-color)]/20"
+              className={`premium-button ${isLoading ? 'loading' : ''}`}
+              disabled={isLoading}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              whileTap={{ scale: 0.98 }}
             >
-              Create Account
-            </button>
+              {isLoading ? (
+                <>
+                  <span className="button-spinner" />
+                  Creating account...
+                </>
+              ) : (
+                <>
+                  Create Account
+                  <ArrowRight className="inline-block ml-2 w-4 h-4" />
+                </>
+              )}
+            </motion.button>
+
+            {/* Terms */}
+            <motion.p
+              className="text-xs text-white/40 text-center mt-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+            >
+              By creating an account, you agree to our{' '}
+              <Link to="/terms" className="auth-link text-xs">Terms of Service</Link>
+              {' '}and{' '}
+              <Link to="/privacy" className="auth-link text-xs">Privacy Policy</Link>
+            </motion.p>
           </form>
 
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              Already have an account?{" "}
-              <Link to="/login" className="text-[var(--secondary-color)] hover:text-[var(--secondary-color-dark)] font-medium">
+          {/* Divider */}
+          <div className="auth-divider">
+            <span>or</span>
+          </div>
+
+          {/* Footer */}
+          <motion.div
+            className="auth-footer"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+          >
+            <p>
+              Already have an account?{' '}
+              <Link to="/login" className="auth-link">
                 Sign in
               </Link>
             </p>
-          </div>
+          </motion.div>
         </div>
-      </motion.div>
-      <Toaster position="top-right" />
+      </div>
     </div>
   );
 };
