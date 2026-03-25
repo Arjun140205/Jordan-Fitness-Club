@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import { motion, useScroll, useTransform, useInView } from "framer-motion";
-import { useRef } from "react";
+import { motion, useScroll, useTransform, useInView, animate } from "framer-motion";
+import { useRef, useState, useEffect } from "react";
 import "./home.css";
 import MembershipSection from "../components/MembershipSection";
 import * as Ri from "react-icons/ri";
@@ -335,55 +335,115 @@ const ProgramCard = ({ program, index }) => {
   );
 };
 
+// Animated counter hook
+const useAnimatedCounter = (target, duration = 1.5) => {
+  const [count, setCount] = useState(0);
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-80px" });
+
+  useEffect(() => {
+    if (!isInView) return;
+    const controls = animate(0, target, {
+      duration,
+      ease: "easeOut",
+      onUpdate: (v) => setCount(Math.round(v)),
+    });
+    return () => controls.stop();
+  }, [isInView, target, duration]);
+
+  return { count, ref };
+};
+
+// Stat item component
+const StatItem = ({ icon, value, suffix, label }) => {
+  const { count, ref } = useAnimatedCounter(value, 2);
+  return (
+    <motion.div
+      ref={ref}
+      className="why-stat-item"
+      whileHover={{ y: -4, transition: { type: "spring", stiffness: 300 } }}
+    >
+      <span className="why-stat-icon">{icon}</span>
+      <span className="why-stat-value">{count}{suffix}</span>
+      <span className="why-stat-label">{label}</span>
+    </motion.div>
+  );
+};
+
 // Why Section Component
 const WhySection = () => {
   const features = [
     {
       image: class1Image,
       title: "Modern Equipment",
-      description: "State-of-the-art facilities with the latest fitness technology and equipment.",
+      description: "State-of-the-art facilities with the latest fitness technology and premium equipment for every workout style.",
+      icon: <Ri.RiSettings3Fill />,
+      tag: "Facilities",
     },
     {
       image: class2Image,
       title: "Expert Trainers",
-      description: "Certified professionals dedicated to helping you achieve your fitness goals.",
+      description: "Certified professionals with years of experience dedicated to helping you crush your fitness goals.",
+      icon: <Ri.RiUserStarFill />,
+      tag: "Coaching",
     },
     {
       image: memberImage,
       title: "Strong Community",
-      description: "Join a supportive community that motivates and inspires you to be your best.",
+      description: "A supportive network of like-minded individuals who motivate and inspire each other daily.",
+      icon: <Ri.RiTeamFill />,
+      tag: "Community",
     },
   ];
 
+  const stats = [
+    { icon: <Ri.RiGroupFill />, value: 500, suffix: "+", label: "Active Members" },
+    { icon: <Ri.RiCalendarCheckFill />, value: 50, suffix: "+", label: "Programs" },
+    { icon: <Ri.RiMedalFill />, value: 10, suffix: "+", label: "Expert Trainers" },
+    { icon: <Ri.RiTimeFill />, value: 24, suffix: "/7", label: "Open Access" },
+  ];
+
   return (
-    <section className="section-container">
+    <section className="section-container why-section">
+      {/* Section Header */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
-        transition={{
-          duration: 0.7,
-          ease: [0.16, 1, 0.3, 1]
-        }}
-        className="text-center mb-12"
+        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        className="why-header"
       >
-        <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-          WHY JORDAN FITNESS CLUB?
-        </h2>
-        <p className="text-gray-600 dark:text-[var(--text-light)] max-w-2xl mx-auto leading-relaxed">
-          We offer more than just a workout - we provide an experience that transforms lives through fitness, community, and expert guidance.
+        <span className="why-header-accent" />
+        <span className="why-header-badge">Why Us</span>
+        <h2 className="why-header-title">WHY JORDAN FITNESS CLUB?</h2>
+        <p className="why-header-subtitle">
+          More than a gym — an experience that transforms lives through world-class fitness, community, and expert guidance.
         </p>
       </motion.div>
 
+      {/* Feature Cards */}
       <motion.div
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
-        className="grid grid-cols-1 md:grid-cols-3 gap-8"
+        className="why-grid"
       >
         {features.map((feature, index) => (
           <FeatureCard key={feature.title} feature={feature} index={index} />
+        ))}
+      </motion.div>
+
+      {/* Stats Bar */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-80px" }}
+        transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+        className="why-stats-bar"
+      >
+        {stats.map((stat) => (
+          <StatItem key={stat.label} {...stat} />
         ))}
       </motion.div>
     </section>
@@ -395,35 +455,34 @@ const FeatureCard = ({ feature, index }) => {
   return (
     <motion.div
       variants={itemVariants}
-      whileHover={{
-        y: -10,
-        transition: { type: "spring", stiffness: 300, damping: 20 }
-      }}
-      className="modern-card bg-white dark:bg-[var(--primary-color-light)] rounded-xl overflow-hidden shadow-lg"
+      className="why-card"
     >
-      <motion.div
-        className="feature-card-image h-48 overflow-hidden"
-        variants={imageRevealVariants}
-      >
+      {/* Image */}
+      <div className="why-card-image-wrap">
         <motion.img
           src={feature.image}
           alt={feature.title}
-          className="w-full h-full object-cover"
-          whileHover={{ scale: 1.1 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="why-card-image"
+          variants={imageRevealVariants}
         />
-      </motion.div>
-      <div className="p-6">
-        <motion.h3
-          className="text-xl font-bold text-gray-900 dark:text-white mb-2"
-          whileHover={{ x: 3 }}
-          transition={{ type: "spring", stiffness: 300 }}
-        >
-          {feature.title}
-        </motion.h3>
-        <p className="text-gray-600 dark:text-[var(--text-light)] leading-relaxed">
-          {feature.description}
-        </p>
+        {/* Overlay */}
+        <div className="why-card-overlay" />
+        {/* Tag badge */}
+        <span className="why-card-tag">{feature.tag}</span>
+      </div>
+
+      {/* Content */}
+      <div className="why-card-body">
+        {/* Icon */}
+        <span className="why-card-icon">{feature.icon}</span>
+
+        <h3 className="why-card-title">{feature.title}</h3>
+        <p className="why-card-desc">{feature.description}</p>
+
+        <Link to="/about" className="why-card-link group">
+          <span>Learn More</span>
+          <Ri.RiArrowRightLine className="transition-transform group-hover:translate-x-1" />
+        </Link>
       </div>
     </motion.div>
   );
