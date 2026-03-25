@@ -219,7 +219,7 @@ const Home = () => {
       </header>
 
       {/* Programs Section */}
-      <section className="section-container">
+      <section className="section-container programs-section">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -227,7 +227,10 @@ const Home = () => {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           className="explore-header"
         >
-          <h2 className="section-header text-gray-900 dark:text-white">EXPLORE OUR PROGRAM</h2>
+          <h2 className="section-header text-gray-900 dark:text-white">EXPLORE OUR PROGRAMS</h2>
+          <p className="text-gray-500 dark:text-gray-400 text-center max-w-2xl mx-auto mt-3 text-lg">
+            Tailored fitness programs designed to push your limits and transform your body
+          </p>
         </motion.div>
 
         <motion.div
@@ -235,7 +238,7 @@ const Home = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-16"
+          className="programs-grid"
         >
           {programs.map((program, index) => (
             <ProgramCard key={program.title} program={program} index={index} />
@@ -263,42 +266,69 @@ const ProgramCard = ({ program, index }) => {
       initial="rest"
       whileHover="hover"
       animate={isInView ? "visible" : "hidden"}
-      className="modern-card bg-white dark:bg-[var(--primary-color-light)] p-6 rounded-xl shadow-lg cursor-pointer"
+      className="program-card"
     >
-      <motion.span
-        className="icon-pulse inline-block p-3 bg-[var(--secondary-color-dark)] rounded-lg text-white text-3xl mb-4"
+      {/* Decorative number */}
+      <span className="program-card-number">
+        {String(index + 1).padStart(2, "0")}
+      </span>
+
+      {/* Animated icon container */}
+      <motion.div
+        className="program-card-icon"
         whileHover={{
-          scale: 1.1,
-          rotate: [0, -10, 10, 0],
-          transition: { duration: 0.4 }
+          scale: 1.15,
+          rotate: [0, -8, 8, 0],
+          transition: { duration: 0.5 }
         }}
       >
-        {program.icon}
-      </motion.span>
+        <span className="program-card-icon-inner">
+          {program.icon}
+        </span>
+        <div className="program-card-icon-ring" />
+      </motion.div>
 
-      <motion.h4
-        className="text-xl font-semibold text-gray-900 dark:text-white mb-2"
-        whileHover={{ x: 3 }}
-        transition={{ type: "spring", stiffness: 300 }}
-      >
-        {program.title}
-      </motion.h4>
-
-      <p className="text-gray-600 dark:text-[var(--text-light)] mb-4 leading-relaxed">
-        {program.description}
-      </p>
-
-      <Link
-        to="/register"
-        className="text-gray-900 dark:text-white hover:text-[var(--secondary-color)] flex items-center gap-2 font-medium group"
-      >
-        Join Now
-        <motion.span
-          className="inline-block"
-          whileHover={{ x: 5 }}
+      {/* Content */}
+      <div className="program-card-content">
+        <motion.h4
+          className="program-card-title"
+          whileHover={{ x: 3 }}
           transition={{ type: "spring", stiffness: 300 }}
         >
-          <Ri.RiArrowRightLine className="group-hover:text-[var(--secondary-color)] transition-colors" />
+          {program.title}
+        </motion.h4>
+
+        <p className="program-card-desc">
+          {program.description}
+        </p>
+
+        {/* Intensity indicator */}
+        <div className="program-card-intensity">
+          <span className="program-card-intensity-label">Intensity</span>
+          <div className="program-card-intensity-dots">
+            {[1, 2, 3, 4, 5].map((dot) => (
+              <span
+                key={dot}
+                className={`program-card-dot ${dot <= program.intensity ? "active" : ""
+                  }`}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* CTA Button */}
+      <Link
+        to="/register"
+        className="program-card-cta group"
+      >
+        <span>Join Now</span>
+        <motion.span
+          className="inline-flex"
+          whileHover={{ x: 4 }}
+          transition={{ type: "spring", stiffness: 300 }}
+        >
+          <Ri.RiArrowRightLine className="text-lg transition-transform group-hover:translate-x-1" />
         </motion.span>
       </Link>
     </motion.div>
@@ -402,23 +432,27 @@ const FeatureCard = ({ feature, index }) => {
 const programs = [
   {
     title: "Strength",
-    description: "Embrace the essence of strength as we delve into its various dimensions physical, mental, and emotional.",
+    description: "Embrace the essence of strength as we delve into its various dimensions — physical, mental, and emotional.",
     icon: <Ri.RiBoxingFill />,
+    intensity: 5,
   },
   {
     title: "Physical Fitness",
-    description: "It encompasses a range of activities that improve health, strength, flexibility, and overall well-being.",
+    description: "A range of activities that improve health, strength, flexibility, and overall well-being.",
     icon: <Ri.RiHeartPulseFill />,
+    intensity: 3,
   },
   {
-    title: "Fat Lose",
-    description: "Through a combination of workout routines and expert guidance, we'll empower you to reach your goals.",
+    title: "Fat Loss",
+    description: "Workout routines and expert guidance designed to empower you to reach your fat-loss goals.",
     icon: <Ri.RiRunLine />,
+    intensity: 4,
   },
   {
     title: "Weight Gain",
-    description: "Designed for individuals, our program offers an effective approach to gaining weight in a sustainable manner.",
+    description: "An effective, sustainable approach to gaining healthy weight with structured nutrition and training.",
     icon: <Ri.RiShoppingBasketFill />,
+    intensity: 3,
   },
 ];
 
