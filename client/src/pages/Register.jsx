@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
-import { Eye, EyeOff, CheckCircle, TrendingUp, Users } from "lucide-react";
+import { Eye, EyeOff, CheckCircle, TrendingUp, Users, ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import { endpoints } from "../constants/config";
 import "../styles/auth.css";
@@ -21,21 +21,19 @@ const schema = yup.object({
   role: yup.string().oneOf(['user', 'admin']).default('user'),
 }).required();
 
-// Staggered entrance
+/* ── Motion variants ─────────────────────────────────────────── */
 const stagger = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.06, delayChildren: 0.12 },
+    transition: { staggerChildren: 0.06, delayChildren: 0.1 },
   },
 };
 
 const fadeSlide = {
-  hidden: { opacity: 0, y: 16, filter: "blur(4px)" },
+  hidden: { opacity: 0, y: 18, filter: "blur(4px)" },
   visible: {
-    opacity: 1,
-    y: 0,
-    filter: "blur(0px)",
+    opacity: 1, y: 0, filter: "blur(0px)",
     transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] },
   },
 };
@@ -74,47 +72,76 @@ const Register = () => {
 
   return (
     <div className="auth-layout">
-      {/* ─── LEFT: VISUAL PANEL (desktop only) ─── */}
+
+      {/* ─── Mobile top banner ─── */}
+      <div className="auth-mobile-banner">
+        <div className="auth-mobile-logo">
+          <img src={logoImg} alt="Jordan Fitness Club" />
+          <span className="auth-mobile-brand">Jordan Fitness</span>
+        </div>
+        <Link to="/" className="auth-mobile-back">
+          <ArrowLeft size={13} /> Home
+        </Link>
+      </div>
+
+      {/* ─── Left: Visual Panel (desktop) ─── */}
       <div className="auth-visual">
         <motion.img
           src={gymImg}
           alt="Jordan Fitness Club Gym"
           className="auth-visual-img"
-          initial={{ scale: 1.1 }}
+          initial={{ scale: 1.12 }}
           animate={{ scale: 1 }}
-          transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1] }}
         />
+        <div className="auth-visual-stripe" />
         <div className="auth-visual-watermark">FITNESS</div>
+
         <div className="auth-visual-content">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 35 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.3 }}
+            transition={{ duration: 0.8, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
           >
             <h2 className="auth-visual-tagline">
-              Join The <span>Elite</span> Community
+              Join The <span>Elite</span><br />Community
             </h2>
             <p className="auth-visual-desc">
               Get access to world-class equipment, expert trainers,
               and a community that pushes you to be your best.
             </p>
+            <div className="auth-visual-stats">
+              <div className="auth-visual-stat">
+                <span className="auth-visual-stat-num">500+</span>
+                <span className="auth-visual-stat-lbl">Members</span>
+              </div>
+              <div className="auth-visual-stat">
+                <span className="auth-visual-stat-num">50+</span>
+                <span className="auth-visual-stat-lbl">Programs</span>
+              </div>
+              <div className="auth-visual-stat">
+                <span className="auth-visual-stat-num">10+</span>
+                <span className="auth-visual-stat-lbl">Trainers</span>
+              </div>
+            </div>
           </motion.div>
         </div>
       </div>
 
-      {/* ─── RIGHT: FORM PANEL ─── */}
+      {/* ─── Right: Form Panel ─── */}
       <div className="auth-form-panel">
         <div className="auth-orb auth-orb-1" />
         <div className="auth-orb auth-orb-2" />
 
         <div className="auth-form-container">
           <div className="auth-form-inner">
-            {/* Logo */}
+
+            {/* Logo (desktop only) */}
             <motion.div
               className="auth-logo"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, type: "spring", stiffness: 200 }}
+              transition={{ duration: 0.55, type: "spring", stiffness: 180 }}
             >
               <img src={logoImg} alt="Jordan Fitness Club" className="auth-logo-img" />
             </motion.div>
@@ -124,6 +151,10 @@ const Register = () => {
               initial="hidden"
               animate="visible"
             >
+              <motion.div variants={fadeSlide}>
+                <div className="auth-accent-line" />
+              </motion.div>
+
               <motion.h1 className="auth-title" variants={fadeSlide}>
                 Create Account
               </motion.h1>
@@ -132,6 +163,7 @@ const Register = () => {
               </motion.p>
 
               <form onSubmit={handleSubmit(onSubmit)}>
+
                 {/* Name */}
                 <motion.div className="auth-field" variants={fadeSlide}>
                   <label className="auth-input-label">Full Name</label>
@@ -147,7 +179,7 @@ const Register = () => {
 
                 {/* Email */}
                 <motion.div className="auth-field" variants={fadeSlide}>
-                  <label className="auth-input-label">Email</label>
+                  <label className="auth-input-label">Email Address</label>
                   <input
                     type="email"
                     {...register("email")}
@@ -191,8 +223,9 @@ const Register = () => {
                       onClick={() => setShowPassword(!showPassword)}
                       className="auth-password-toggle"
                       tabIndex={-1}
+                      aria-label={showPassword ? "Hide password" : "Show password"}
                     >
-                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
                     </button>
                   </div>
                   {errors.password && <p className="auth-error">{errors.password.message}</p>}
@@ -219,7 +252,7 @@ const Register = () => {
                   </motion.div>
                 )}
 
-                {/* Role */}
+                {/* Account Type */}
                 <motion.div className="auth-field" variants={fadeSlide}>
                   <label className="auth-input-label">Account Type</label>
                   <select {...register("role")} className="auth-select">
@@ -237,27 +270,21 @@ const Register = () => {
                   whileTap={{ scale: 0.98 }}
                 >
                   {isLoading ? (
-                    <>
-                      <span className="auth-spinner" />
-                      Creating account...
-                    </>
-                  ) : (
-                    'Create Account'
-                  )}
+                    <><span className="auth-spinner" />Creating account...</>
+                  ) : 'Create Account →'}
                 </motion.button>
 
                 {/* Feature pills */}
                 <motion.div className="auth-feature-pills" variants={fadeSlide}>
-                  <span className="auth-feature-pill"><CheckCircle /> Free Trial</span>
-                  <span className="auth-feature-pill"><TrendingUp /> Track Progress</span>
-                  <span className="auth-feature-pill"><Users /> Community</span>
+                  <span className="auth-feature-pill"><CheckCircle size={11} />Free Trial</span>
+                  <span className="auth-feature-pill"><TrendingUp size={11} />Track Progress</span>
+                  <span className="auth-feature-pill"><Users size={11} />Community</span>
                 </motion.div>
 
                 {/* Terms */}
                 <motion.p className="auth-terms" variants={fadeSlide}>
                   By registering, you agree to our{' '}
-                  <Link to="/terms">Terms</Link>
-                  {' & '}
+                  <Link to="/terms">Terms</Link>{' & '}
                   <Link to="/privacy">Privacy Policy</Link>
                 </motion.p>
               </form>
